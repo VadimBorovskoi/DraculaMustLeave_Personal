@@ -114,7 +114,5 @@ TArray<FHitResult> UTraceUtil::ConeTraceByChannel(UObject* WorldContextObject, c
         }
         break;
     }
-    
-   
     return Hits;
 }

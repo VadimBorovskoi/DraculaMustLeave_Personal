@@ -29,7 +29,6 @@ class DRACULAMUSTLEAVE_API UTraceUtil : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable, Category = "ConeTrace")
-
     static TArray<FHitResult> ConeTraceByChannel(
         UObject* WorldContextObject,
         const FVector& Start,
