@@ -7,6 +7,7 @@
 #include "FreeAim.h"
 #include "LockAim.h"
 #include "CameraBank.h"
+#include "FOV.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "TypeUtil.h"
@@ -25,6 +26,8 @@ public:
 	float PitchSensitivity = 1.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sensitivity")
 	float YawSensitivity = 1.f;
+	float CameraRotationRate = 0.f;
+	FRotator PreviousFrameRotation;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UFreeAim> FreeAim;
@@ -32,6 +35,8 @@ protected:
 	ULockAim* LockAim;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraBank* Roll;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UFOV> FOV;
 private:
 	UAbstractAim* ActiveAim;
 	float InputX;

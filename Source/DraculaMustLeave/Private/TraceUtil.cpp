@@ -105,7 +105,6 @@ TArray<FHitResult> UTraceUtil::ConeTraceByChannel(UObject* WorldContextObject, c
 
             // Calculate the Base Radius based on distance to maintain visual consistency
             float BaseRadius = Radius * (200.f / Distance);
-            UE_LOG(LogTemp, Warning, TEXT("Base Radius: %f, Distance: %f"), BaseRadius, Distance);
     
             // Draw the circle facing the camera, keeping the correct orientation
             DrawDebugCircle(WorldContextObject->GetWorld(), ConeBaseCenter, BaseRadius, 32, DebugColor,

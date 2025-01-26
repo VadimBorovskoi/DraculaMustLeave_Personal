@@ -24,8 +24,14 @@ public:
 	static FRotator AsymptoticAverageTimeBased(FRotator Value, FRotator TargetRotation, float Time, float DeltaTime, float AdditionalMultiplier = 1.0f);
 	UFUNCTION(BlueprintPure, Category = "Asymptotic Average") 
 	static FRotator AsymptoticAverageSpeedBased(FRotator Value, FRotator TargetRotation, float Smoothness, float DeltaTime, float AdditionalMultiplier = 1.0f);
+	UFUNCTION(BlueprintPure, Category = "Asymptotic Average") 
+	static float FAsymptoticAverageSpeedBased(float Value, float target, float Smoothness, float DeltaTime, float AdditionalMultiplier = 1.0f);
+	UFUNCTION(BlueprintPure, Category = "Asymptotic Average") 
+	static float FAsymptoticAverageByDiff(float Value, float Diff, float Smoothness, float DeltaTime, float AdditionalMultiplier = 1.0f);
 
 	UFUNCTION(BlueprintPure, Category = "Interpolant")
 	static float GetInterpolant(FRotator CurVal, FRotator InitVal, FRotator TargetVal);
+	UFUNCTION(BlueprintPure, Category = "Interpolant")
+	static float FGetInterpolant(float CurVal, float InitVal, float TargetVal);
 
 };

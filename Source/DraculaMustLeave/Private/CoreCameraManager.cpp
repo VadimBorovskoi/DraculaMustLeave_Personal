@@ -15,7 +15,9 @@ void ACoreCameraManager::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActiveAim(FreeAim);
+	FOV = GetComponentByClass<UFOV>();
 	ActualCamera = GetOwningPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>();
+	ActualCamera->SetFieldOfView(FOV->GetInitializedFOV(LockAim));
 }
 
 void ACoreCameraManager::SetActiveAim(UAbstractAim* Aim, AActor* PossibleActor)
@@ -45,7 +47,9 @@ void ACoreCameraManager::UpdateCamera(float DeltaTime)
 
 	APawn* PlayerPawn = GetOwningPlayerController()->GetPawn();
 	if (!PlayerPawn) return;
-	
+
+	PreviousFrameRotation = GetCameraRotation();
+
 	FRotator newRotator = GetCameraRotation();
 	
 	float Pitch = newRotator.Pitch;
@@ -67,6 +71,8 @@ void ACoreCameraManager::UpdateCamera(float DeltaTime)
 	
 	if (ActualCamera)
 	ActualCamera->SetRelativeRotation(FRotator(result.Pitch, GetCameraRotation().Yaw, result.Roll));
+	CameraRotationRate = UTypeUtil::GetRotatorDistance(PreviousFrameRotation, GetCameraRotation());
+	ActualCamera->SetFieldOfView(FOV->GetFOV(DeltaTime, GeneralSensitivity));
 
 }
 

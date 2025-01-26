@@ -18,7 +18,7 @@ void ULockAim::HandleAim(float XInput, float YInput, AActor* Target, float Sensi
 	if (bLocked && !bIsLocked)
 	{
 		bIsLocked = true;
-		OnTargetLocked.Broadcast(Target);
+		OnTargetLocked.Broadcast(Target, DeltaTime);
 	} 
 
 	FRotator NewRotation;
@@ -38,9 +38,10 @@ void ULockAim::HandleAim(float XInput, float YInput, AActor* Target, float Sensi
 		float RotationDistance = UTypeUtil::GetRotatorDistance(Owner->GetActorRotation(), LookAtRotation);
 		//Finding the time within which the interpolation has to take place
 		float DesiredTime = FMath::Clamp(0.1, -FMath::Loge(0.01)/LockRotationRate, MaxRotationTime );
-		NewRotation = UInterpolationUtil::AsymptoticAverageTimeBased(Owner->GetActorRotation(), LookAtRotation,
-			DesiredTime,DeltaTime, FMath::Pow( SensitivityRate,2 ));
-		OnLockTransition.Broadcast(UInterpolationUtil::GetInterpolant(NewRotation, StartingRotation, LookAtRotation), Target);
+		CurrentRotationRate = FMath::FInterpTo(CurrentRotationRate, GeneralRotationRate, DeltaTime, RotationRateTransitionSpeed);
+		NewRotation = UInterpolationUtil::AsymptoticAverageSpeedBased(Owner->GetActorRotation(), LookAtRotation,
+			CurrentRotationRate,DeltaTime, FMath::Pow( SensitivityRate,2 ));
+		OnLockTransition.Broadcast(UInterpolationUtil::GetInterpolant(NewRotation, StartingRotation, LookAtRotation), Target, DeltaTime);
 	}
 	TargetPitch = NewRotation.Pitch;
 	TargetYaw = NewRotation.Yaw;
@@ -50,6 +51,7 @@ void ULockAim::Reset(AActor* Target)
 {
 	StartingRotation = GetOwner()->GetActorRotation();
 	bIsLocked = false;
+	CurrentRotationRate = LockRotationRate;
 }
 bool ULockAim::IsLookingAt(FRotator LookAtRotation)
 {

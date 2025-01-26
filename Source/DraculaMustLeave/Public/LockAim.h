@@ -13,8 +13,8 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLockTransition, float, Interpolant, AActor*, ActorTarget);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetLocked, AActor*, ActorTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLockTransition, float, Interpolant, AActor*, ActorTarget, float, DeltaTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTargetLocked, AActor*, ActorTarget, float, DeltaTime);
 
 UCLASS()
 class DRACULAMUSTLEAVE_API ULockAim : public UAbstractAim
@@ -33,6 +33,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Speed Definitions")
 	float LockRotationRate = .4f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Speed Definitions")
+	float RotationRateTransitionSpeed = 2.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Speed Definitions")
 	float GeneralRotationRate = .8f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Speed Definitions")
 	float MaxRotationTime = 2.f;
@@ -48,6 +50,7 @@ private:
 	bool bIsLocked = false;
 	FRotator StartingRotation;
 	float LockTolerance = 5.0f;
+	float CurrentRotationRate = 0.0f;
 
 public:
 	virtual void HandleAim(float XInput, float YInput, AActor* Target, float SensitivityRate, float DeltaTime, float& TargetPitch, float& TargetYaw) override;
