@@ -17,7 +17,6 @@ float UFOV::GetFOV(float DeltaTime, float AdditionalMultiplier)
 {
 	//Rework so that offsets are interpolated, not the FOV itself
 	if (AdditionalMultiplier == 0.0f) AdditionalMultiplier = 1.0f;
-	UE_LOG(LogTemp, Display, TEXT("CurrentStarting FOV: %f"), CurrentStartingFOV);
 		
 	if (FMath::IsNearlyEqual(CurrentFOV, TargetFOV.Offset)) return CurrentFOV;
 
@@ -27,7 +26,6 @@ float UFOV::GetFOV(float DeltaTime, float AdditionalMultiplier)
 	case ESmoothingFunction::Linear:
 		Alpha = UInterpolationUtil::FGetInterpolant(CurrentFOV, CurrentStartingFOV, TargetFOV.Offset);
 		CurrentFOV = FMath::Lerp(CurrentStartingFOV, TargetFOV.Offset, Alpha) + DeltaTime * TargetFOV.TransitionSmoothness * AdditionalMultiplier;
-		UE_LOG(LogTemp, Display, TEXT("Interolant: %f"), Alpha);
 
 		break;
 	case ESmoothingFunction::Asymptotic:

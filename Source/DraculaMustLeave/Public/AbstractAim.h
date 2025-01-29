@@ -18,9 +18,9 @@ public:
 	// Sets default values for this component's properties
 	UAbstractAim();
 
-	UPROPERTY(BlueprintAssignable, Category="Event Dispatchers")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnActivate OnActivate;
-	UPROPERTY(BlueprintAssignable, Category="Event Dispatchers")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnDeactivate OnDeactivate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pitch Limits")
