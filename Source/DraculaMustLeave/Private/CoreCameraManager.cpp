@@ -16,8 +16,10 @@ void ACoreCameraManager::BeginPlay()
 	Super::BeginPlay();
 	SetActiveAim(FreeAim);
 	FOV = GetComponentByClass<UFOV>();
+	ReaperPawn = Cast<AReaperPawn>(GetOwningPlayerController()->GetPawn());
 	ActualCamera = GetOwningPlayerController()->GetPawn()->GetComponentByClass<UCameraComponent>();
-	ActualCamera->SetFieldOfView(FOV->GetInitializedFOV(LockAim));
+	
+	ActualCamera->SetFieldOfView(FOV->GetInitializedFOV(LockAim, ReaperPawn));
 }
 
 void ACoreCameraManager::SetActiveAim(UAbstractAim* Aim, AActor* PossibleActor)

@@ -3,6 +3,7 @@
 
 #include "FOV.h"
 #include "InterpolationUtil.h"
+#include "ReaperPawn.h"
 // Sets default values for this component's properties
 UFOV::UFOV()
 {
@@ -44,11 +45,16 @@ float UFOV::GetFOV(float DeltaTime, float AdditionalMultiplier)
 	return CurrentFOV;
 }
 
-float UFOV::GetInitializedFOV(ULockAim* LockAim)
+float UFOV::GetInitializedFOV(ULockAim* LockAim, AReaperPawn* Reaper)
 {
 	LockComponent = LockAim;
 	LockComponent->OnActivate.AddUniqueDynamic(this, &UFOV::StartZoomIn);
 	LockComponent->OnDeactivate.AddUniqueDynamic(this, &UFOV::StopZoomIn);
+	
+	Reaper->OnDashBegin.AddUniqueDynamic(this, &UFOV::StartDashNormal);
+	Reaper->OnDashEnd.AddUniqueDynamic(this, &UFOV::StopDashNormal);
+	Reaper->OnDashUpdate.AddUniqueDynamic(this, &UFOV::StopDashNormal);
+	
 	TargetFOV = DefaultFOV;
 	CurrentStartingFOV = DefaultFOV.Offset;
 	CurrentFOV = DefaultFOV.Offset;
@@ -64,10 +70,22 @@ void UFOV:: StopZoomIn(AActor* Target)
 {
 	UpdateOffsets(ZoomIn, false);
 }
+
+void UFOV:: StartDashNormal(AActor* Target, float XValue)
+{
+	if (FMath::Abs(XValue) <= MaxXValueForDash)
+	{
+		UpdateOffsets(DashNormal, true);
+	}
+}
+void UFOV:: StopDashNormal(AActor* Target, float Alpha)
+{
+	if (Alpha>=DashAlphaOverride) UpdateOffsets(DashNormal, false);
+}
+
 void UFOV::UpdateOffsets(FOffset TargetOffset, bool Add)
 {
 	CurrentStartingFOV = TargetFOV.Offset;
-
 	Offsets.Remove(TargetOffset);
 	if (Add)
 	{
@@ -80,7 +98,8 @@ void UFOV::UpdateOffsets(FOffset TargetOffset, bool Add)
 	}
 	for (FOffset Offset : Offsets)
 	{
-		TargetFOV.Offset = FMath::Clamp(TargetFOV.Offset + Offset.Offset, FOVLowerLimit, FOVUpperLimit);
+			TargetFOV.Offset = FMath::Clamp(TargetFOV.Offset + Offset.Offset, FOVLowerLimit, FOVUpperLimit);
+			UE_LOG(LogTemp, Warning, TEXT("Updated Target FOV: %f"), TargetFOV .Offset);
 	}
 	
 		TargetFOV.TransitionSmoothness = Offsets.Last().TransitionSmoothness;
@@ -89,6 +108,7 @@ void UFOV::UpdateOffsets(FOffset TargetOffset, bool Add)
 		{
 			TargetFOV.Offset = FMath::Clamp(DefaultFOV.Offset + Offsets.Last().Offset, FOVLowerLimit, FOVUpperLimit);
 		}
+
 }
 
 

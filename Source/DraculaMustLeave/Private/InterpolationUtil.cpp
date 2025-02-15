@@ -10,7 +10,6 @@ float UInterpolationUtil:: GetInterpolant(FRotator CurVal, FRotator InitVal, FRo
 }
 float UInterpolationUtil::FGetInterpolant(float CurVal, float InitVal, float TargetVal)
 {
-	if (FMath::IsNearlyEqual(InitVal, TargetVal)) return 0.0f;
 	return FMath::Clamp((CurVal - InitVal) / (TargetVal - InitVal), 0.0f, 1.0f);
 }
 FRotator UInterpolationUtil :: AsymptoticAverageTimeBased(FRotator Value, FRotator TargetRotation, float Time, float DeltaTime, float AdditionalMultiplier)

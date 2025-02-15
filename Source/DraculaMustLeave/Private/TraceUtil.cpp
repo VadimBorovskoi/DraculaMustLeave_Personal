@@ -46,8 +46,6 @@ bool UTraceUtil::ConeTraceChannelLogic(UObject* WorldContextObject, const FVecto
         if (HitActor)
         {
             DrawDebugSphere(WorldContextObject->GetWorld(), HitActor->GetActorLocation(), 75.f, 12, FColor::Red, false );
-           
-            UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s, Channel: %d"), *HitActor->GetActorLabel(), OutHits[0].Component->GetCollisionObjectType());
         }
         
         const FVector& HitDir = (HitActor->GetActorLocation() - Start).GetSafeNormal();

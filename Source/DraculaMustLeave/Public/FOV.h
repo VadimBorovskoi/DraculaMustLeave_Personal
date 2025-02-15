@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "LockAim.h"
+#include "ReaperPawn.h"
 #include "FOV.generated.h"
 
 UENUM(BlueprintType)
@@ -55,10 +56,15 @@ public:
 	float FOVUpperLimit = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Defaults")
 	float FOVLowerLimit = 50.0f;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash Parameters")
+	float DashAlphaOverride = 0.75f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash Parameters")
+	float MaxXValueForDash = 0.4f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Offsets")
 	FOffset ZoomIn;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Offsets")
+	FOffset DashNormal;
 	
 private:
 	ULockAim* LockComponent;
@@ -70,10 +76,14 @@ private:
 public:	
 	// Called every frame
 	float GetFOV(float DeltaTime, float AdditionalMultiplier = 1.f);
-	float GetInitializedFOV(ULockAim* LockAim);
+	float GetInitializedFOV(ULockAim* LockAim, AReaperPawn* Reaper);
 	UFUNCTION()
 	void StartZoomIn(AActor* Target);
 	UFUNCTION()
 	void StopZoomIn(AActor* Target);
+	UFUNCTION()
+	void StartDashNormal(AActor* Target, float XValue);
+	UFUNCTION()
+	void StopDashNormal(AActor* Target, float XValue);
 	void UpdateOffsets(FOffset TargetOffset, bool Add);
 };

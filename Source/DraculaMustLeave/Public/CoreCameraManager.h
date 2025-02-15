@@ -8,6 +8,7 @@
 #include "LockAim.h"
 #include "CameraBank.h"
 #include "FOV.h"
+#include "ReaperPawn.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "TypeUtil.h"
@@ -28,6 +29,9 @@ public:
 	float YawSensitivity = 1.f;
 	float CameraRotationRate = 0.f;
 	FRotator PreviousFrameRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+	AReaperPawn* ReaperPawn;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UFreeAim> FreeAim;
@@ -37,6 +41,7 @@ protected:
 	UCameraBank* Roll;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UFOV> FOV;
+	
 private:
 	UAbstractAim* ActiveAim;
 	float InputX;
