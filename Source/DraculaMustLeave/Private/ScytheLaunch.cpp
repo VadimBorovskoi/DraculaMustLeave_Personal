@@ -92,16 +92,3 @@ void UScytheLaunch::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 }
 
-
-
-
-
-
-// Called every frame
-void UScytheLaunch::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
