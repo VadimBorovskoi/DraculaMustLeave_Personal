@@ -2,19 +2,18 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "AbsScytheAction.h"
-#include "ScytheThrow.generated.h"
+#include "ScytheLaunch.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class DRACULAMUSTLEAVE_API UScytheThrow : public UAbsScytheAction
+class DRACULAMUSTLEAVE_API UScytheLaunch : public UAbsScytheAction
 {
 	GENERATED_BODY()
-public:
-	UScytheThrow();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Throw Parameters")
 	float TimeElapsedToRecall = .3f;

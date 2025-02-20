@@ -1,26 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "ScytheThrow.h"
+#include "ScytheLaunch.h"
 
 #include "InterpolationUtil.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
-UScytheThrow::UScytheThrow()
-{
-    UE_LOG(LogTemp, Warning, TEXT("UScytheThrow Constructor Called"));
-}
 
 //Can Switch if either enough Time Elapsed or Scythe is Static
-void UScytheThrow::CanSwitch(FVector OwnerPos, FVector ScythePos, bool& CanSwitch)
+void UScytheLaunch::CanSwitch(FVector OwnerPos, FVector ScythePos, bool& CanSwitch)
 {
 	CanSwitch = (Scythe -> ScytheState == EScytheState::THROWN && ActionTimeElapsed >= TimeElapsedToRecall)
 		|| Scythe -> ScytheState == EScytheState::STATIC;
 }
 
 //Reset Parameters, Rotate the Scythe towards the Forward Direction of the Crosshair
-void UScytheThrow::Enable(float XDir, FVector NewTargetPoint)
+void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 {
 	TargetPoint = NewTargetPoint;
 	RollAngle =  FMath::IsNearlyEqual(XDir, 0) ? RollAngle : RollAngle * FMath::Sign(XDir);
@@ -44,7 +38,7 @@ void UScytheThrow::Enable(float XDir, FVector NewTargetPoint)
 	UE_LOG(LogTemp, Display, TEXT("Thrown Enabled"));
 }
 //Accelerate towards the point, move there
-void UScytheThrow::Update(float DeltaTime)
+void UScytheLaunch::Update(float DeltaTime)
 {
 	if (Scythe->ScytheState != EScytheState::THROWN) return;
 	
@@ -67,7 +61,7 @@ void UScytheThrow::Update(float DeltaTime)
 	Scythe->SpinScythe(SpinSign * RotationRate * DeltaTime);
 }
 //Attach to the overlapped actor if there is one
-void UScytheThrow::Disable()
+void UScytheLaunch::Disable()
 {
 	if (!StuckParent) return;
 	
@@ -78,13 +72,13 @@ void UScytheThrow::Disable()
 	UE_LOG(LogTemp, Display, TEXT("Thrown Disabled"));
 
 }
-void UScytheThrow::HandleColliderOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void UScytheLaunch::HandleColliderOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Scythe->ScytheState != EScytheState::THROWN) return;
 }
 //Update the new Parent Actor to the Overlapped one
-void UScytheThrow::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void UScytheLaunch::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Display, TEXT("Thrown Collided with: %s"), *OtherActor->GetName());
@@ -99,4 +93,15 @@ void UScytheThrow::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, A
 }
 
 
+
+
+
+
+// Called every frame
+void UScytheLaunch::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
+}
 

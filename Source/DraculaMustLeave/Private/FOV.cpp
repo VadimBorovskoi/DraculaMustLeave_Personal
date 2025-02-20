@@ -86,28 +86,39 @@ void UFOV:: StopDashNormal(AActor* Target, float Alpha)
 void UFOV::UpdateOffsets(FOffset TargetOffset, bool Add)
 {
 	CurrentStartingFOV = TargetFOV.Offset;
+	if (!Offsets.Contains(TargetOffset))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UFOV::Current Starting FOV %f"), CurrentStartingFOV);
+		UE_LOG(LogTemp, Warning, TEXT("UFOV::Target Offset's Offset %f"), TargetOffset.Offset);
+	}
+	
 	Offsets.Remove(TargetOffset);
 	if (Add)
 	{
 		Offsets.AddUnique(TargetOffset);
 	}
+	TargetFOV = DefaultFOV;
 	if (Offsets.Num() <= 0)
 	{
-		TargetFOV = DefaultFOV;
+		UE_LOG(LogTemp, Warning, TEXT("UFOV::Reset Target Offset %f"), TargetFOV.Offset);
 		return;
 	}
 	for (FOffset Offset : Offsets)
 	{
-			TargetFOV.Offset = FMath::Clamp(TargetFOV.Offset + Offset.Offset, FOVLowerLimit, FOVUpperLimit);
-			UE_LOG(LogTemp, Warning, TEXT("Updated Target FOV: %f"), TargetFOV .Offset);
+
+		TargetFOV.Offset = FMath::Clamp(TargetFOV.Offset + Offset.Offset, FOVLowerLimit, FOVUpperLimit);
+		UE_LOG(LogTemp, Warning, TEXT("UFOV::Updated Target Offset %f"), TargetFOV.Offset);
 	}
 	
-		TargetFOV.TransitionSmoothness = Offsets.Last().TransitionSmoothness;
-		TargetFOV.SmoothingFunction = Offsets.Last().SmoothingFunction;
-		if (Offsets.Last().bIsAdditive == false)
-		{
-			TargetFOV.Offset = FMath::Clamp(DefaultFOV.Offset + Offsets.Last().Offset, FOVLowerLimit, FOVUpperLimit);
-		}
+	TargetFOV.TransitionSmoothness = Offsets.Last().TransitionSmoothness;
+	TargetFOV.SmoothingFunction = Offsets.Last().SmoothingFunction;
+	if (Offsets.Last().bIsAdditive == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Offset is not Additive"));
+		TargetFOV.Offset = FMath::Clamp(DefaultFOV.Offset + Offsets.Last().Offset, FOVLowerLimit, FOVUpperLimit);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("UFOV::UpdateOffsets %d"), Offsets.Num());
+
 
 }
 

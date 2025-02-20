@@ -16,8 +16,8 @@ enum class EScytheState : uint8
 	RECALLED UMETA(DisplayName = "Recalled")
 };
 class UAbsScytheAction;
-class UScytheThrow;
 class UScytheRecall;
+class UScytheThrow;
 
 UCLASS()
 class DRACULAMUSTLEAVE_API AScythe : public AActor

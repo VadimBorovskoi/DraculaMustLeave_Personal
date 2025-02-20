@@ -34,6 +34,7 @@ AScythe::AScythe()
 
 	DirectionArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	DirectionArrow->SetupAttachment(Collider);
+	
 
 	
 
