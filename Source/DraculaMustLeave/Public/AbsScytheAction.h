@@ -72,7 +72,6 @@ public:
 	float ManaConsumptionPerFrame;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Parameters")
 	float DamagePerHit;
-
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnActionActivate OnActivate;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
@@ -92,8 +91,9 @@ public:
 	float DecelerationTime = 0.f;
 	float AccelerationTime = 0.f;
 
+	
 protected:
-	// Called when the game starts
+		// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	

@@ -3,6 +3,7 @@
 
 #include "ScytheThrow.h"
 
+#include "Damageable.h"
 #include "InterpolationUtil.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -90,8 +91,16 @@ void UScytheThrow::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, A
 	UE_LOG(LogTemp, Display, TEXT("Thrown Collided with: %s"), *OtherActor->GetName());
 	if (Scythe->ScytheState != EScytheState::THROWN || OtherActor == Scythe->ScytheHand->Reaper) return;
 
+	IDamageable* ActorToDamage = Cast<IDamageable>(OtherActor);
 
-	if (bShouldStopAtAnObstacle)
+	bool bShouldScytheStop = bShouldStopAtAnObstacle;
+	if (ActorToDamage)
+	{
+		float ModifiedDamage = DamagePerHit;
+		ActorToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, ModifiedDamage, bShouldScytheStop );
+		Scythe->UpdateReaperCombo(ModifiedDamage);
+	}
+	if (bShouldScytheStop)
 	{
 		StuckParent = OtherActor;
 		OnDeactivate.Broadcast();

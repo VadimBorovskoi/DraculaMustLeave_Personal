@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "HealthCombo.h"
 #include "ReaperPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDashBegin, AActor*, ActorTarget, float, XValue);
@@ -41,6 +42,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "MovementComponents")
 	UAbstractMovement* CurrentMovement;
 
+	//Stats Components
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementAComponents")
+	TObjectPtr<UHealthCombo> ComboHealth;
+	
 	//Camera & Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SceneComponents")
 	USpringArmComponent* SpringArm;

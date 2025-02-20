@@ -4,7 +4,7 @@
 
 #include "AbsScytheAction.h"
 #include "ScytheRecall.h"
-#include "ScytheThrow.h"
+#include "ScytheLaunch.h"
 
 
 #include "Components/BoxComponent.h"
@@ -44,7 +44,7 @@ AScythe::AScythe()
 void AScythe::BeginPlay()
 {
 	Super::BeginPlay();
-	ThrowAction = GetComponentByClass<UScytheThrow>();
+	ThrowAction = GetComponentByClass<UScytheLaunch>();
 	RecallAction = GetComponentByClass<UScytheRecall>();
 	
 	Collider->OnComponentBeginOverlap.AddUniqueDynamic(this, &AScythe::OnColliderOverlap);
@@ -143,9 +143,14 @@ void AScythe::Show()
 void AScythe::SetOwnerHand(UScytheHand* Hand)
 {
 	ScytheHand = Hand;
-	ThrowAction = GetComponentByClass<UScytheThrow>();
+	ThrowAction = GetComponentByClass<UScytheLaunch>();
 	RecallAction = GetComponentByClass<UScytheRecall>();
 }
+void AScythe::UpdateReaperCombo(float DealtDamage)
+{
+	ScytheHand -> Reaper -> ComboHealth -> AddHealth(DealtDamage);
+}
+
 
 
 

@@ -14,3 +14,14 @@ float UTypeUtil::GetPowWithSign(float num, float pow)
 {
 	return FMath::Sign(num) * FMath::Pow(num, pow);
 }
+UActorComponent* UTypeUtil::GetFirstComponentByInterface(AActor* Actor, TSubclassOf<UInterface> InterfaceClass)
+{
+	if (!Actor || !InterfaceClass)
+	{
+		return nullptr;
+	}
+
+	TArray<UActorComponent*> Components = Actor->GetComponentsByInterface(InterfaceClass);
+    
+	return Components.Num() > 0 ? Components[0] : nullptr;
+}

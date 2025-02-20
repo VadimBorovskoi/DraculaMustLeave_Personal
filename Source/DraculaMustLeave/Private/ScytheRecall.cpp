@@ -3,7 +3,9 @@
 
 #include "ScytheRecall.h"
 
+#include "Damageable.h"
 #include "InterpolationUtil.h"
+#include "TypeUtil.h"
 #include "Kismet/KismetMathLibrary.h"
 
 //Can Switch To Throw only if is Held
@@ -100,6 +102,16 @@ void UScytheRecall::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (Scythe->ScytheState != EScytheState::RECALLED) return;
 	UE_LOG(LogTemp, Display, TEXT("Recalled Collided"));
 
+	IDamageable* ComponentToDamage = Cast<IDamageable>(UTypeUtil::GetFirstComponentByInterface(OtherActor, UDamageable::StaticClass()));
+
+	bool bShouldScytheStop = bShouldStopAtAnObstacle;
+	
+	if (ComponentToDamage)
+	{
+		float ModifiedDamage = DamagePerHit;
+		ComponentToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, ModifiedDamage, bShouldScytheStop );
+		Scythe->UpdateReaperCombo(ModifiedDamage);
+	}
 	if (bShouldStopAtAnObstacle)
 	{
 		OnDeactivate.Broadcast();

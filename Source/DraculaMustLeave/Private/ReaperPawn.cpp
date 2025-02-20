@@ -32,6 +32,7 @@ void AReaperPawn::BeginPlay()
 	Super::BeginPlay();
 	BaseMovement = GetComponentByClass<UBaseMovement>();
 	StrafeMovement = GetComponentByClass<UStrafeMovement>();
+	ComboHealth = GetComponentByClass<UHealthCombo>();
 	CurrentMovement = BaseMovement;
 }
 void AReaperPawn::ProcessInput_Implementation(float InputX, float InputY, AActor* Target)

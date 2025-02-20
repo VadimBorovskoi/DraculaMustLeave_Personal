@@ -16,4 +16,5 @@ class DRACULAMUSTLEAVE_API UTypeUtil : public UBlueprintFunctionLibrary
 public:
 	static float GetRotatorDistance(FRotator Start, FRotator End);
 	static float GetPowWithSign(float num, float pow);
+	static UActorComponent* GetFirstComponentByInterface(AActor* Actor, TSubclassOf<UInterface> InterfaceClass);
 };
