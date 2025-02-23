@@ -18,6 +18,7 @@ void UAbsScytheAction::BeginPlay()
 {
 	Super::BeginPlay();
 	Scythe = Cast<AScythe>(GetOwner());
+	DefaultActionParameters = ActionParameters;
 	
 	OnActivate.AddUniqueDynamic(this, &UAbsScytheAction::Enable);
 	OnDeactivate.AddUniqueDynamic(this, &UAbsScytheAction::Disable);

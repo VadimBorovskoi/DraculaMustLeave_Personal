@@ -3,11 +3,36 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbsScytheAction.h"
 #include "Components/ActorComponent.h"
 #include "AbsScytheAbility.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActivationWindowOpen);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActivationWindowClose);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+USTRUCT(BlueprintType)
+struct FScytheAbilityParameters
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge Parameters")
+	bool bShouldCharge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge Parameters")
+	float RequiredChargeTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge Parameters")
+	bool bShouldActivateOnRelease = true;
+	bool bIsCharged;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Window Parameters")
+	bool bShouldHaveActivationWindow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Window Parameters")
+	float ActivationDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Window Parameters")
+	float ActivationWindowTime;
+	bool bCanActivationWindowOpen;
+	bool bCanActivateWithinWindow;
+};
+
+UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UAbsScytheAbility : public UActorComponent
 {
 	GENERATED_BODY()
@@ -15,14 +40,86 @@ class DRACULAMUSTLEAVE_API UAbsScytheAbility : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UAbsScytheAbility();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action Parameters")
+	FScytheActionParameters OverridenActionParameters;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
+	bool bIsAdditiveParams;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
+	bool bIsAdditiveEffects;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Parameters")
+	FScytheAbilityParameters ActivationParameters;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnActionActivate OnActivate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnActionDeactivate OnDeactivate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnCharge OnCharge;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnUpdate OnUpdate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnColliderOverlap OnColliderOverlap;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnMeshOverlap OnMeshOverlap;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
+	TSubclassOf<UAbsScytheAction> ConnectedActionClass;
+
+	UAbsScytheAction* ConnectedAction;
+	AScythe* Scythe;
+	bool bIsEnabled;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	virtual void MergeDelegates();
+	UFUNCTION()
+	void HandleActivate(float xDir, FVector TargetPoint) {OnActivate.Broadcast(xDir, TargetPoint);}
+	UFUNCTION()
+	void HandleDeactivate() {OnDeactivate.Broadcast();}
+	UFUNCTION()
+	void HandleCharge(float ElapsedTime){OnCharge.Broadcast(ElapsedTime);}
+	UFUNCTION()
+	void HandleUpdate(float DeltaTime) {OnUpdate.Broadcast(DeltaTime);}
+	UFUNCTION()
+	void HandleMeshHit(UPrimitiveComponent* OverlappedComponent, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult) { OnMeshOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
+	UFUNCTION()
+	void HandleCollisionHit(UPrimitiveComponent* OverlappedComponent, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult) { OnColliderOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
+public:
+	virtual void Activate(AScythe* Scythe);
+	virtual bool IsEnabled();
+	
+	UFUNCTION(Category = "Abstract")
+	virtual void Enable(float xDir, FVector TargetPoint) PURE_VIRTUAL(UAbsScytheAbility::Enable, );
+	UFUNCTION(Category = "Abstract")
+	virtual void Disable() PURE_VIRTUAL(UAbsScytheAbility::Disable, );
+	UFUNCTION(Category = "Abstract")
+	virtual void Charge(float ElapsedTime) PURE_VIRTUAL(UAbsScytheAbility::Charge, );
+	UFUNCTION(Category = "Abstract")
+	virtual void Update(float DeltaSeconds) PURE_VIRTUAL(UAbsScytheAbility::Charge, );
+	
+	UFUNCTION(Category = "Abstract")
+	virtual void HitMesh(UPrimitiveComponent* OverlappedComponent, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult) PURE_VIRTUAL(UAbsScytheAbility::HitMesh, );
+	UFUNCTION(Category = "Abstract")
+	virtual void HitCollision(UPrimitiveComponent* OverlappedComponent, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult) PURE_VIRTUAL(UAbsScytheAbility::HitCollision, );
 };

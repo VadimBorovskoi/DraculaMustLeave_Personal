@@ -24,17 +24,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FOnMeshOverlap,UPrimitiveComponent*
 			bool, bFromSweep, 
 			const FHitResult&, SweepResult);
 
-
-UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DRACULAMUSTLEAVE_API UAbsScytheAction : public UActorComponent
+USTRUCT(BlueprintType)
+struct FScytheActionParameters
 {
-	
 	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
-	UAbsScytheAction();
-	AScythe* Scythe;
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
 	TEnumAsByte<ECollisionChannel> ColliderCollisionChannel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
@@ -72,6 +66,22 @@ public:
 	float ManaConsumptionPerFrame;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Parameters")
 	float DamagePerHit;
+};
+
+UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class DRACULAMUSTLEAVE_API UAbsScytheAction : public UActorComponent
+{
+	
+	GENERATED_BODY()
+
+public:	
+	// Sets default values for this component's properties
+	UAbsScytheAction();
+	AScythe* Scythe;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
+	FScytheActionParameters ActionParameters;
+	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnActionActivate OnActivate;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
@@ -91,7 +101,8 @@ public:
 	float DecelerationTime = 0.f;
 	float AccelerationTime = 0.f;
 
-	
+protected:
+	FScytheActionParameters DefaultActionParameters;
 protected:
 		// Called when the game starts
 	virtual void BeginPlay() override;
@@ -103,7 +114,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Abstract")
 	virtual void CanActivate(UPARAM(ref) bool& CanActivate) PURE_VIRTUAL(0);
 	UFUNCTION(BlueprintPure)
-	virtual bool IsOnPress() {return true;};
+	virtual bool IsOnPress() {return true;}
+	virtual void ResetParameters(){ActionParameters = DefaultActionParameters;}
 
 	UFUNCTION()
 	virtual  void Enable(float XDir, FVector NewTargetPoint) PURE_VIRTUAL(0);

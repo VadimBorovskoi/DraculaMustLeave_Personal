@@ -3,6 +3,8 @@
 
 #include "TypeUtil.h"
 
+#include "AbsScytheAction.h"
+
 float UTypeUtil::GetRotatorDistance(FRotator Start, FRotator End)
 {
 	FQuat QStart = FQuat(Start);

@@ -143,8 +143,8 @@ void AScythe::Show()
 void AScythe::SetOwnerHand(UScytheHand* Hand)
 {
 	ScytheHand = Hand;
-	ThrowAction = GetComponentByClass<UScytheLaunch>();
-	RecallAction = GetComponentByClass<UScytheRecall>();
+	if (!ThrowAction) ThrowAction = GetComponentByClass<UScytheLaunch>();
+	if (!RecallAction) RecallAction = GetComponentByClass<UScytheRecall>();
 }
 void AScythe::UpdateReaperCombo(float DealtDamage)
 {

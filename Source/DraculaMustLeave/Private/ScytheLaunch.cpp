@@ -19,11 +19,11 @@ void UScytheLaunch::CanSwitch(FVector OwnerPos, FVector ScythePos, bool& CanSwit
 void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 {
 	TargetPoint = NewTargetPoint;
-	RollAngle =  FMath::IsNearlyEqual(XDir, 0) ? RollAngle : RollAngle * FMath::Sign(XDir);
+	ActionParameters.RollAngle =  FMath::IsNearlyEqual(XDir, 0) ? ActionParameters.RollAngle : ActionParameters.RollAngle * FMath::Sign(XDir);
 	ActionTimeElapsed = 0;
 	AccelerationTime = 0;
 	DecelerationTime = 0;
-	CurrentVelocity = MinVelocity;
+	CurrentVelocity = ActionParameters.MinVelocity;
 	Scythe->SetActorLocation(Scythe->ScytheHand->GetComponentLocation());
 	
 	Scythe->RotateDirection(UKismetMathLibrary::FindLookAtRotation(Scythe->GetActorLocation(),
@@ -32,8 +32,8 @@ void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 	Scythe->ScytheHand->SetLocalScytheVisibility(false);
 
 	
-	Scythe->SetColliderCollision(ColliderCollisionChannel, ColliderCollisionEnabled, "ScytheThrow");
-	Scythe->SetMeshCollision(MeshCollisionChannel, MeshCollisionEnabled, "ScytheThrow");
+	Scythe->SetColliderCollision(ActionParameters.ColliderCollisionChannel, ActionParameters.ColliderCollisionEnabled, "ScytheThrow");
+	Scythe->SetMeshCollision(ActionParameters.MeshCollisionChannel, ActionParameters.MeshCollisionEnabled, "ScytheThrow");
 	
 	Scythe->Show();
 	Scythe->ScytheState = EScytheState::THROWN;
@@ -45,22 +45,22 @@ void UScytheLaunch::Update(float DeltaTime)
 	if (Scythe->ScytheState != EScytheState::THROWN) return;
 	
 	ActionTimeElapsed += DeltaTime;
-	if (CurrentVelocity != MaxVelocity)
+	if (CurrentVelocity != ActionParameters.MaxVelocity)
 	{
 		AccelerationTime += DeltaTime;
-		CurrentVelocity = FMath::Lerp(MinVelocity, MaxVelocity,
-	AccelerationCurve->GetFloatValue(AccelerationTime));
+		CurrentVelocity = FMath::Lerp(ActionParameters.MinVelocity, ActionParameters.MaxVelocity,
+	ActionParameters.AccelerationCurve->GetFloatValue(AccelerationTime));
 	} else
 	{
 		AccelerationTime = 0.f;
 	}
 	
 	FRotator NewRotation = Scythe->GetActorRotation();
-	NewRotation.Roll = FMath::FInterpTo(NewRotation.Roll, RollAngle, DeltaTime, 25.f);
+	NewRotation.Roll = FMath::FInterpTo(NewRotation.Roll, ActionParameters.RollAngle, DeltaTime, 25.f);
 	Scythe->SetActorRotation(NewRotation);
 	Scythe->SetActorLocation(Scythe->GetActorLocation() + Scythe->GetMovementDirection() * CurrentVelocity * DeltaTime,
 		true);
-	Scythe->SpinScythe(SpinSign * RotationRate * DeltaTime);
+	Scythe->SpinScythe(ActionParameters.SpinSign * ActionParameters.RotationRate * DeltaTime);
 }
 //Attach to the overlapped actor if there is one
 void UScytheLaunch::Disable()
@@ -88,11 +88,11 @@ void UScytheLaunch::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 	IDamageable* ComponentToDamage = Cast<IDamageable>(UTypeUtil::GetFirstComponentByInterface(OtherActor, UDamageable::StaticClass()));
 
-	bool bShouldScytheStop = bShouldStopAtAnObstacle;
+	bool bShouldScytheStop = ActionParameters.bShouldStopAtAnObstacle;
 	
 	if (ComponentToDamage)
 	{
-		float ModifiedDamage = DamagePerHit;
+		float ModifiedDamage = ActionParameters.DamagePerHit;
 		ComponentToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, ModifiedDamage, bShouldScytheStop );
 		Scythe->UpdateReaperCombo(ModifiedDamage);
 	}
