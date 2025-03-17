@@ -15,14 +15,14 @@ class DRACULAMUSTLEAVE_API UScythePierce : public UAbsScytheAbility
 {
 	GENERATED_BODY()
 protected:
-	// Called when the game starts
-	virtual void MergeDelegates() override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
 	TSubclassOf<UAbsScytheAction> SecondaryActionClass;
 
 	UAbsScytheAction* SecondaryAction;
-	UScytheRecall ScytheRecall;
+	UScytheRecall* ScytheRecall;
 public:
+	virtual void AttachToAction(AScythe* NewScythe) override;
+	virtual void DetachFromAction(AScythe* NewScythe) override;
 	virtual void Activate(AScythe* NewScythe) override;
 	virtual void Enable(float xDir, FVector TargetPoint) __override;
 	virtual void Disable() __override;
@@ -41,9 +41,5 @@ public:
 			int32 OtherBodyIndex, 
 			bool bFromSweep, 
 			const FHitResult& SweepResult) __override;
-protected:
-	UFUNCTION()
-	virtual void DetectActivationWindow(float DeltaSeconds);
-	UFUNCTION()
-	virtual void CheckCorrectTiming();
+
 };

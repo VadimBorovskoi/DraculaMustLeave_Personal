@@ -56,15 +56,21 @@ void AScythe::BeginPlay()
 void AScythe::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (CurrentAction) CurrentAction->Update(DeltaTime);
+	if (CurrentAction)
+	{
+		CurrentAction->Update(DeltaTime);
+	}
 }
 bool AScythe::ReceiveInput()
 {
 	bool CanSwitch = false;
 	CurrentAction->CanSwitch(ScytheHand->GetComponentLocation(), GetActorLocation(), CanSwitch);
-	if (!CanSwitch) return false;
 	UE_LOG(LogTemp, Warning, TEXT("Can Switch : %s"), CanSwitch ? TEXT("true") : TEXT("false"));
+
+	if (!CanSwitch) return false;
+	
 	SwitchAction(CurrentAction == RecallAction ? ThrowAction : RecallAction);
+	
 	bIsOnPress = CurrentAction->IsOnPress();
 	if (bIsOnPress)
 	{
@@ -74,15 +80,15 @@ bool AScythe::ReceiveInput()
 }
 bool AScythe::Charge(float ElapsedSeconds)
 {
-	if (!bIsOnPress) return false;
+	if (bIsOnPress || CurrentAction->IsActive()) return false;
+	
 	CurrentAction->OnCharge.Broadcast(ElapsedSeconds);
 	return true;
 }
 bool AScythe::Release()
 {
-	bool IsFullyCharged = false;
-	CurrentAction->CanActivate(IsFullyCharged);
-	if (bIsOnPress || !IsFullyCharged) return false;
+	if (bIsOnPress || CurrentAction->IsActive()) return false;
+
 	CurrentAction->OnActivate.Broadcast(ScytheHand->GetReaperMovementDirection().X, ScytheHand->GetCrosshairTarget());
 	return true;
 }
@@ -91,17 +97,15 @@ void AScythe::SwitchAction(UAbsScytheAction* NewAction)
 	if (CurrentAction && CurrentAction->OnDeactivate.IsBound()) CurrentAction->OnDeactivate.Broadcast();
 	CurrentAction = NewAction;
 }
-void AScythe::SetMeshCollision(ECollisionChannel CollisionChannel, ECollisionEnabled::Type CollisionEnabled, FName PresetName)
+void AScythe::SetMeshCollision(FName PresetName)
 {
 	ScytheMesh->SetCollisionProfileName(PresetName);
-	//ScytheMesh->SetCollisionObjectType(CollisionChannel);
-	//ScytheMesh->SetCollisionEnabled(CollisionEnabled);
+	
 }
-void AScythe::SetColliderCollision(ECollisionChannel CollisionChannel, ECollisionEnabled::Type CollisionEnabled, FName PresetName)
+void AScythe::SetColliderCollision(FName PresetName)
 {
 	Collider->SetCollisionProfileName(PresetName);
-	//Collider->SetCollisionObjectType(CollisionChannel);
-	//Collider->SetCollisionEnabled(CollisionEnabled);
+	
 }
 void AScythe::DisableCollision()
 {

@@ -18,12 +18,32 @@ void UScytheLaunch::CanSwitch(FVector OwnerPos, FVector ScythePos, bool& CanSwit
 //Reset Parameters, Rotate the Scythe towards the Forward Direction of the Crosshair
 void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 {
+	if (Scythe-> ScytheState == EScytheState::THROWN) return;
+	
+	FScytheActionParameters NewParams;
+	for (int32 i = 0; i < ParametersPool.Num(); i++)
+	{
+		NewParams += ParametersPool[i];
+	}
+	ActionParameters = NewParams;
+	
+	for (int32 i = 0; i < AbilityArray.Num(); i++)
+	{
+		
+		if (AbilityArray[i]->ActivationParameters.bShouldHaveActivationWindow)
+		{
+			AbilityArray[i]->ActivationParameters.bCanActivateWithinWindow = false;
+			AbilityArray[i]->ActivationParameters.bCanActivationWindowOpen = false;
+		}
+	}
+	
 	TargetPoint = NewTargetPoint;
 	ActionParameters.RollAngle =  FMath::IsNearlyEqual(XDir, 0) ? ActionParameters.RollAngle : ActionParameters.RollAngle * FMath::Sign(XDir);
 	ActionTimeElapsed = 0;
 	AccelerationTime = 0;
 	DecelerationTime = 0;
 	CurrentVelocity = ActionParameters.MinVelocity;
+	
 	Scythe->SetActorLocation(Scythe->ScytheHand->GetComponentLocation());
 	
 	Scythe->RotateDirection(UKismetMathLibrary::FindLookAtRotation(Scythe->GetActorLocation(),
@@ -32,8 +52,8 @@ void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 	Scythe->ScytheHand->SetLocalScytheVisibility(false);
 
 	
-	Scythe->SetColliderCollision(ActionParameters.ColliderCollisionChannel, ActionParameters.ColliderCollisionEnabled, "ScytheThrow");
-	Scythe->SetMeshCollision(ActionParameters.MeshCollisionChannel, ActionParameters.MeshCollisionEnabled, "ScytheThrow");
+	Scythe->SetColliderCollision("ScytheThrow");
+	Scythe->SetMeshCollision("ScytheThrow");
 	
 	Scythe->Show();
 	Scythe->ScytheState = EScytheState::THROWN;
@@ -65,7 +85,12 @@ void UScytheLaunch::Update(float DeltaTime)
 //Attach to the overlapped actor if there is one
 void UScytheLaunch::Disable()
 {
-	if (!StuckParent) return;
+	if (StuckParent == nullptr) return;
+	
+	for (int32 i = 0; i < AbilityArray.Num(); i++)
+	{
+		AbilityArray[i]->DetachFromAction(Scythe);
+	}
 	
 	Scythe->DisableCollision();
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::KeepWorld,true);

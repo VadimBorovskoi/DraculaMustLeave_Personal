@@ -10,6 +10,7 @@ UAbsScytheAction::UAbsScytheAction()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	// ...
+	
 }
 
 
@@ -19,6 +20,7 @@ void UAbsScytheAction::BeginPlay()
 	Super::BeginPlay();
 	Scythe = Cast<AScythe>(GetOwner());
 	DefaultActionParameters = ActionParameters;
+	ResetParameters();
 	
 	OnActivate.AddUniqueDynamic(this, &UAbsScytheAction::Enable);
 	OnDeactivate.AddUniqueDynamic(this, &UAbsScytheAction::Disable);
@@ -27,6 +29,15 @@ void UAbsScytheAction::BeginPlay()
 	OnColliderOverlap.AddUniqueDynamic(this, &UAbsScytheAction::HandleColliderOverlap);
 	OnMeshOverlap.AddUniqueDynamic(this, &UAbsScytheAction::HandleMeshOverlap);
 	// ...
+}
+void UAbsScytheAction::UpdateParameters(FScytheActionParameters NewParams, bool bIsAdditive)
+{
+	if (bIsAdditive)
+	{
+		ParametersPool.Add(NewParams);
+		return;
+	}
+	ActionParameters.SetNonZeroParams(NewParams);
 }
 
 

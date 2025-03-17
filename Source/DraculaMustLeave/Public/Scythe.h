@@ -69,8 +69,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	bool Release();
 
-	void SetMeshCollision(ECollisionChannel CollisionChannel, ECollisionEnabled::Type CollisionEnabled, FName PresetName);
-	void SetColliderCollision(ECollisionChannel CollisionChannel, ECollisionEnabled::Type CollisionEnabled, FName PresetName);
+	void SetMeshCollision(FName PresetName);
+	void SetColliderCollision(FName PresetName);
 	UFUNCTION()
 	void OnColliderOverlap(UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, 

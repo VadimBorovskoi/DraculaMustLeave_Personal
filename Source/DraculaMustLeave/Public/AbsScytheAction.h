@@ -2,71 +2,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbsScytheAbility.h"
 #include "Scythe.h"
+#include "TypeUtil.h"
 #include "Components/ActorComponent.h"
 #include "AbsScytheAction.generated.h"
-
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionActivate, float, XDir, FVector, TargetPoint);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionDeactivate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharge, float, ElapsedTime);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdate, float, DeltaTime);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FOnColliderOverlap,UPrimitiveComponent*, OverlappedComponent, 
-			AActor*, OtherActor, 
-			UPrimitiveComponent*, OtherComp, 
-			int32, OtherBodyIndex, 
-			bool, bFromSweep, 
-			const FHitResult&, SweepResult);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FOnMeshOverlap,UPrimitiveComponent*, OverlappedComponent, 
-			AActor*, OtherActor, 
-			UPrimitiveComponent*, OtherComp, 
-			int32, OtherBodyIndex, 
-			bool, bFromSweep, 
-			const FHitResult&, SweepResult);
-
-USTRUCT(BlueprintType)
-struct FScytheActionParameters
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	TEnumAsByte<ECollisionChannel> ColliderCollisionChannel;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	TEnumAsByte<ECollisionChannel> MeshCollisionChannel;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	TEnumAsByte<ECollisionEnabled::Type> MeshCollisionEnabled;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	TEnumAsByte<ECollisionEnabled::Type> ColliderCollisionEnabled;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	bool bShouldStopAtAnObstacle = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
-	bool bShouldStopAfterHit = true;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed Parameters")
-	float MaxVelocity;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed Parameters")
-	float MinVelocity;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed Parameters")
-	UCurveFloat* AccelerationCurve;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Speed Parameters")
-	UCurveFloat* DecelerationCurve;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotation Parameters")
-	float RotationRate;
-	//int RollSign;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotation Parameters")
-	float RollAngle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotation Parameters")
-	int SpinSign;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Parameters")
-	float ManaConsumption;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Parameters")
-	float ManaConsumptionPerFrame;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Parameters")
-	float DamagePerHit;
-};
 
 UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UAbsScytheAction : public UActorComponent
@@ -95,6 +35,8 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnMeshOverlap OnMeshOverlap;
 
+	TArray<UAbsScytheAbility*> AbilityArray;
+
 	FVector TargetPoint;
 	float ActionTimeElapsed;
 	float CurrentVelocity;
@@ -103,6 +45,7 @@ public:
 
 protected:
 	FScytheActionParameters DefaultActionParameters;
+	TArray<FScytheActionParameters> ParametersPool;
 protected:
 		// Called when the game starts
 	virtual void BeginPlay() override;
@@ -111,12 +54,28 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Abstract")
 	virtual void CanSwitch(FVector OwnerPos, FVector ScythePos, UPARAM(ref) bool& CanSwitch) PURE_VIRTUAL(0);
 	//Check if Charged Enough?
-	UFUNCTION(BlueprintPure, Category = "Abstract")
-	virtual void CanActivate(UPARAM(ref) bool& CanActivate) PURE_VIRTUAL(0);
 	UFUNCTION(BlueprintPure)
-	virtual bool IsOnPress() {return true;}
-	virtual void ResetParameters(){ActionParameters = DefaultActionParameters;}
-
+	virtual bool IsOnPress() {return OnCharge.IsBound() == false;}
+	UFUNCTION()
+	virtual void UpdateParameters(FScytheActionParameters NewParams, bool bIsAdditive);
+	UFUNCTION()
+	virtual void ResetParameters()
+	{
+		if (ActionParameters == DefaultActionParameters && ParametersPool.Num() == 1.f) return;
+		ActionParameters = DefaultActionParameters;
+		ParametersPool.Empty();
+		ParametersPool.Add(ActionParameters);
+	}
+	//Check if any ability in the pool Should Activate On Release
+	UFUNCTION(BlueprintPure)
+	virtual bool ShouldAutoActivateWhenCharged() {
+		for (int32 i = 0; i < AbilityArray.Num(); i++)
+		{
+			if (AbilityArray[i]->ActivationParameters.bShouldActivateOnRelease) return true;
+		}
+		return false;
+	}
+	
 	UFUNCTION()
 	virtual  void Enable(float XDir, FVector NewTargetPoint) PURE_VIRTUAL(0);
 	UFUNCTION()

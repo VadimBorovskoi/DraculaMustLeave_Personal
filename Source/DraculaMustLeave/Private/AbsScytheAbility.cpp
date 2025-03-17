@@ -2,8 +2,9 @@
 
 
 #include "AbsScytheAbility.h"
-
+#include "AbsScytheAction.h"
 #include "TypeUtil.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UAbsScytheAbility::UAbsScytheAbility()
@@ -23,56 +24,36 @@ void UAbsScytheAbility::BeginPlay()
 	OnCharge.AddUniqueDynamic(this, &UAbsScytheAbility::Charge);
 	OnMeshOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HitMesh);
 	OnColliderOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HitCollision);
-	
+
+	TArray<AActor*> FoundActors;
+	Activate(Cast<AScythe>(GetOwner()));
 	
 }
 void UAbsScytheAbility::Activate(AScythe* NewScythe)
 {
 	Scythe = NewScythe;
 	ConnectedAction = Cast<UAbsScytheAction>(Scythe->GetComponentByClass(ConnectedActionClass));
-	ConnectedAction->OnActivate.AddUniqueDynamic(this, &UAbsScytheAbility::Enable);
-	if (bIsAdditiveEffects)
-	{
-		MergeDelegates();
-	} else
-	{
-		ConnectedAction->OnActivate = OnActivate;
-        ConnectedAction->OnDeactivate = OnDeactivate;
-		ConnectedAction->OnCharge = OnCharge;
-		ConnectedAction->OnUpdate = OnUpdate;
-		ConnectedAction->OnColliderOverlap = OnColliderOverlap;
-		ConnectedAction->OnMeshOverlap = OnMeshOverlap;
-	}
-	if (bIsAdditiveParams)
-	{
-		//Add one struct to another (requires overriding the + of the struct
-	} else
-	{
-		ConnectedAction->ActionParameters = OverridenActionParameters;
-	}
+	ConnectedAction->AbilityArray.AddUnique(this);
+	if (ActivationParameters.bShouldCharge) ConnectedAction->OnCharge.AddUniqueDynamic(this, &UAbsScytheAbility::HandleCharge);
 }
+
 void UAbsScytheAbility::MergeDelegates()
 {
-	ConnectedAction->OnActivate.AddUniqueDynamic(this, &UAbsScytheAbility::HandleActivate);
-	ConnectedAction->OnDeactivate.AddUniqueDynamic(this, &UAbsScytheAbility::HandleDeactivate);
-	ConnectedAction->OnCharge.AddUniqueDynamic(this, &UAbsScytheAbility::HandleCharge);
-	ConnectedAction->OnUpdate.AddUniqueDynamic(this, &UAbsScytheAbility::HandleUpdate);
-	ConnectedAction->OnMeshOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HandleMeshHit);
-	ConnectedAction->OnColliderOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HandleCollisionHit);
+	
 }
 
 bool UAbsScytheAbility::IsEnabled()
 {
-	bool bIsEnabled = true;
+	bool bIsPossibleToEnable = true;
 	if (ActivationParameters.bShouldHaveActivationWindow)
 	{
-		bIsEnabled = ActivationParameters.bCanActivationWindowOpen && ActivationParameters.bCanActivateWithinWindow;
+		bIsPossibleToEnable = ActivationParameters.bCanActivationWindowOpen && ActivationParameters.bCanActivateWithinWindow;
 	}
 	if (ActivationParameters.bShouldCharge)
 	{
-		bIsEnabled = ActivationParameters.bIsCharged;
+		bIsPossibleToEnable = ActivationParameters.bIsCharged;
 	}
-	return bIsEnabled;
+	return bIsPossibleToEnable;
 }
 
 

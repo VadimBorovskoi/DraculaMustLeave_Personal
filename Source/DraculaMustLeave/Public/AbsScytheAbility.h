@@ -3,12 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbsScytheAction.h"
 #include "Components/ActorComponent.h"
+#include "TypeUtil.h"
+#include "Scythe.h"
 #include "AbsScytheAbility.generated.h"
+
+class UAbsScytheAction;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActivationWindowOpen);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActivationWindowClose);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityAttach, AScythe*, Scythe);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityDetach, AScythe*, Scythe);
 
 USTRUCT(BlueprintType)
 struct FScytheAbilityParameters
@@ -30,6 +36,7 @@ public:
 	float ActivationWindowTime;
 	bool bCanActivationWindowOpen;
 	bool bCanActivateWithinWindow;
+	float CurrentTime;
 };
 
 UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -40,15 +47,16 @@ class DRACULAMUSTLEAVE_API UAbsScytheAbility : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UAbsScytheAbility();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Parameters")
+	FScytheAbilityParameters ActivationParameters;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action Parameters")
 	FScytheActionParameters OverridenActionParameters;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
 	bool bIsAdditiveParams;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parameters")
 	bool bIsAdditiveEffects;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation Parameters")
-	FScytheAbilityParameters ActivationParameters;
-
+	
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnActionActivate OnActivate;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
@@ -96,7 +104,11 @@ protected:
 			bool bFromSweep, 
 			const FHitResult& SweepResult) { OnColliderOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
 public:
-	virtual void Activate(AScythe* Scythe);
+	virtual void Activate(AScythe* NewScythe);
+	UFUNCTION(Category = "Abstract")
+	virtual void AttachToAction(AScythe* NewScythe) PURE_VIRTUAL(UAbsScytheAbility::AttachToAction, );
+	UFUNCTION(Category = "Abstract")
+	virtual void DetachFromAction(AScythe* NewScythe) PURE_VIRTUAL(UAbsScytheAbility::DetachFromAction, );
 	virtual bool IsEnabled();
 	
 	UFUNCTION(Category = "Abstract")

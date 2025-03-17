@@ -37,8 +37,8 @@ void UScytheThrow::Enable(float XDir, FVector NewTargetPoint)
 	Scythe->ScytheHand->SetLocalScytheVisibility(false);
 
 	
-	Scythe->SetColliderCollision(ActionParameters.ColliderCollisionChannel, ActionParameters.ColliderCollisionEnabled, "ScytheThrow");
-	Scythe->SetMeshCollision(ActionParameters.MeshCollisionChannel, ActionParameters.MeshCollisionEnabled, "ScytheThrow");
+	Scythe->SetColliderCollision("ScytheThrow");
+	Scythe->SetMeshCollision( "ScytheThrow");
 	
 	Scythe->Show();
 	Scythe->ScytheState = EScytheState::THROWN;

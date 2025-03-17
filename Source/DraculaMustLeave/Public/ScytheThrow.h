@@ -23,8 +23,6 @@ private:
 	
 public:
 	virtual void CanSwitch(FVector OwnerPos, FVector ScythePos, UPARAM(ref) bool& CanSwitch) override;
-	virtual void CanActivate(UPARAM(ref) bool& CanActivate) override {CanActivate = true;}
-	virtual bool IsOnPress() override {return Super::IsOnPress();}
 	
 	virtual void Enable(float XDir, FVector NewTargetPoint) override;
 	virtual void Disable() override;
