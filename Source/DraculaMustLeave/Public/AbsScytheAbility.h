@@ -68,7 +68,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnColliderOverlap OnColliderOverlap;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnMeshOverlap OnMeshOverlap;
+	FOnMeshHit OnMeshOverlap;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Components")
@@ -90,12 +90,11 @@ protected:
 	UFUNCTION()
 	void HandleUpdate(float DeltaTime) {OnUpdate.Broadcast(DeltaTime);}
 	UFUNCTION()
-	void HandleMeshHit(UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult) { OnMeshOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
+	void HandleMeshHit( UPrimitiveComponent* HitComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse,
+			const FHitResult& Hit) { OnMeshOverlap.Broadcast(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);}
 	UFUNCTION()
 	void HandleCollisionHit(UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, 
@@ -121,12 +120,11 @@ public:
 	virtual void Update(float DeltaSeconds) PURE_VIRTUAL(UAbsScytheAbility::Charge, );
 	
 	UFUNCTION(Category = "Abstract")
-	virtual void HitMesh(UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult) PURE_VIRTUAL(UAbsScytheAbility::HitMesh, );
+	virtual void HitMesh(UPrimitiveComponent* HitComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse,
+			const FHitResult& Hit) PURE_VIRTUAL(UAbsScytheAbility::HitMesh, );
 	UFUNCTION(Category = "Abstract")
 	virtual void HitCollision(UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, 

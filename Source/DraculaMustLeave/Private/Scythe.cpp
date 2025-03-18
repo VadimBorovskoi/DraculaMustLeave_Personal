@@ -48,7 +48,7 @@ void AScythe::BeginPlay()
 	RecallAction = GetComponentByClass<UScytheRecall>();
 	
 	Collider->OnComponentBeginOverlap.AddUniqueDynamic(this, &AScythe::OnColliderOverlap);
-	ScytheMesh->OnComponentBeginOverlap.AddUniqueDynamic(this, &AScythe::OnMeshOverlap);
+	ScytheMesh->OnComponentHit.AddUniqueDynamic(this, &AScythe::OnMeshHit);
 	SwitchAction(RecallAction);
 }
 
@@ -99,26 +99,27 @@ void AScythe::SwitchAction(UAbsScytheAction* NewAction)
 }
 void AScythe::SetMeshCollision(FName PresetName)
 {
+	ScytheMesh->SetSimulatePhysics(true);
 	ScytheMesh->SetCollisionProfileName(PresetName);
-	
 }
 void AScythe::SetColliderCollision(FName PresetName)
 {
 	Collider->SetCollisionProfileName(PresetName);
-	
 }
 void AScythe::DisableCollision()
 {
+	ScytheMesh->SetSimulatePhysics(false);
 	ScytheMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Collider->SetSimulatePhysics(false);
 	Collider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 void AScythe::OnColliderOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	CurrentAction->OnColliderOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
-void AScythe::OnMeshOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AScythe::OnMeshHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	CurrentAction->OnMeshOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	CurrentAction->OnMeshOverlap.Broadcast(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 }
 void AScythe::SpinScythe(float AddedSpinAngle)
 {

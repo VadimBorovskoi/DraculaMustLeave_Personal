@@ -7,6 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "Scythe.generated.h"
+class UAbsScytheAction;
+
 UENUM(BlueprintType)
 enum class EScytheState : uint8
 {
@@ -15,7 +17,6 @@ enum class EScytheState : uint8
 	STATIC   UMETA(DisplayName = "Static"),
 	RECALLED UMETA(DisplayName = "Recalled")
 };
-class UAbsScytheAction;
 
 
 UCLASS()
@@ -79,12 +80,12 @@ public:
 			bool bFromSweep, 
 			const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult);
+	void OnMeshHit( UPrimitiveComponent* HitComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse,
+			const FHitResult& Hit);
+	
 	void DisableCollision();
 
 	void SetOwnerHand(UScytheHand* Hand);

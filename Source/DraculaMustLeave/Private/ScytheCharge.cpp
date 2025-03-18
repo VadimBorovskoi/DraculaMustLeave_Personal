@@ -31,8 +31,8 @@ void UScytheCharge::DetachFromAction(AScythe* NewScythe)
 	//Reset the struct of parameters, Have the Action Reset its Behaviors
 	ConnectedAction->ResetParameters();
 
-	ConnectedAction->OnMeshOverlap.AddUniqueDynamic(ConnectedAction, &UAbsScytheAction::HandleMeshOverlap);
-	ConnectedAction->OnMeshOverlap.RemoveDynamic(this, &UScytheCharge::HitMesh);
+	ConnectedAction->OnColliderOverlap.AddUniqueDynamic(ConnectedAction, &UAbsScytheAction::HandleColliderOverlap);
+	ConnectedAction->OnColliderOverlap.RemoveDynamic(this, &UScytheCharge::HitCollision);
 	ConnectedAction->OnDeactivate.RemoveDynamic(this, &UScytheCharge::Deactivate);
 
 	ConnectedAction->OnUpdate.AddUniqueDynamic(ConnectedAction, &UAbsScytheAction::Update);
@@ -128,9 +128,11 @@ void UScytheCharge::Update(float DeltaTime)
 	Scythe->SpinScythe(ConnectedAction->ActionParameters.SpinSign * ConnectedAction->ActionParameters.RotationRate * DeltaTime);
 }
 
-void UScytheCharge::HitMesh(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UScytheCharge::HitMesh(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	
+}
+void UScytheCharge::HitCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
 	
 	if (!ScytheLaunch || Scythe->ScytheState != EScytheState::THROWN || OtherActor == Scythe->ScytheHand->Reaper) return;
 
@@ -151,7 +153,4 @@ void UScytheCharge::HitMesh(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		ScytheLaunch->SetStuckParent(OtherActor);
 		ScytheLaunch->OnDeactivate.Broadcast();
 	}
-}
-void UScytheCharge::HitCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
 }

@@ -26,12 +26,11 @@ public:
 	virtual void Disable() __override;
 	virtual void Charge(float ElapsedTime) __override;
 	virtual void Update(float DeltaSeconds) __override;
-	virtual void HitMesh(UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult) __override;
+	virtual void HitMesh(UPrimitiveComponent* HitComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse,
+			const FHitResult& Hit) __override;
 	virtual void HitCollision(UPrimitiveComponent* OverlappedComponent, 
 			AActor* OtherActor, 
 			UPrimitiveComponent* OtherComp, 

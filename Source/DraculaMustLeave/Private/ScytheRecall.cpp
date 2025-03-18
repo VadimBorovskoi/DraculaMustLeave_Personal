@@ -186,12 +186,6 @@ void UScytheRecall::Disable()
 void UScytheRecall::HandleColliderOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Scythe->ScytheState != EScytheState::RECALLED) return;
-}
-//For Mesh Attachment
-void UScytheRecall::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
 	if (Scythe->ScytheState != EScytheState::RECALLED || OtherActor == Scythe->ScytheHand->Reaper) return;
 	UE_LOG(LogTemp, Display, TEXT("Recalled Collided"));
 
@@ -208,5 +202,9 @@ void UScytheRecall::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ActionParameters.bShouldStopAtAnObstacle)
 	{
 		OnDeactivate.Broadcast();
-	}
+	}}
+//For Mesh Attachment
+void UScytheRecall::HandleMeshOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	
 }

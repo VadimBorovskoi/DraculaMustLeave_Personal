@@ -33,7 +33,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnColliderOverlap OnColliderOverlap;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnMeshOverlap OnMeshOverlap;
+	FOnMeshHit OnMeshOverlap;
 
 	TArray<UAbsScytheAbility*> AbilityArray;
 
@@ -92,12 +92,11 @@ public:
 			bool bFromSweep, 
 			const FHitResult& SweepResult) PURE_VIRTUAL(0);
 	UFUNCTION()
-	virtual void HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
-			AActor* OtherActor, 
-			UPrimitiveComponent* OtherComp, 
-			int32 OtherBodyIndex, 
-			bool bFromSweep, 
-			const FHitResult& SweepResult) PURE_VIRTUAL(0);
+	virtual void HandleMeshOverlap(UPrimitiveComponent* HitComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse,
+			const FHitResult& Hit) PURE_VIRTUAL(0);
 	UFUNCTION()
 	virtual void DebugDrawOnTick(float DeltaTime);
 };
