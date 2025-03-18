@@ -58,7 +58,7 @@ void AScythe::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (CurrentAction)
 	{
-		CurrentAction->Update(DeltaTime);
+		CurrentAction->OnUpdate.Broadcast(DeltaTime);
 	}
 }
 bool AScythe::ReceiveInput()
@@ -134,6 +134,10 @@ FVector AScythe::GetMovementDirection()
 {
 	//return DirectionArrow->GetForwardVector();
 	return GetActorForwardVector();
+}
+FVector AScythe::GetBottomPosition()
+{
+	return DirectionArrow->GetComponentLocation();
 }
 void AScythe::Hide()
 {

@@ -94,6 +94,8 @@ public:
 	void RotateDirection(FRotator NewRotation);
 	//Either get Arrow's Direction or own
 	FVector GetMovementDirection();
+	FVector GetBottomPosition();
+
 	//Is Invoked by Hand
 	void Hide();
 	//Is Invoked by Recall Action

@@ -98,4 +98,6 @@ public:
 			int32 OtherBodyIndex, 
 			bool bFromSweep, 
 			const FHitResult& SweepResult) PURE_VIRTUAL(0);
+	UFUNCTION()
+	virtual void DebugDrawOnTick(float DeltaTime);
 };

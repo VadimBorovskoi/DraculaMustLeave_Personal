@@ -23,7 +23,13 @@ void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 	FScytheActionParameters NewParams;
 	for (int32 i = 0; i < ParametersPool.Num(); i++)
 	{
-		NewParams += ParametersPool[i];
+		if (i == 0)
+		{
+			NewParams += ActionParameters;
+		} else
+		{
+			NewParams += ParametersPool[i];
+		}
 	}
 	ActionParameters = NewParams;
 	
@@ -85,12 +91,12 @@ void UScytheLaunch::Update(float DeltaTime)
 //Attach to the overlapped actor if there is one
 void UScytheLaunch::Disable()
 {
-	if (StuckParent == nullptr) return;
-	
 	for (int32 i = 0; i < AbilityArray.Num(); i++)
 	{
 		AbilityArray[i]->DetachFromAction(Scythe);
 	}
+	
+	if (StuckParent == nullptr) return;
 	
 	Scythe->DisableCollision();
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::KeepWorld,true);
@@ -108,12 +114,12 @@ void UScytheLaunch::HandleColliderOverlap(UPrimitiveComponent* OverlappedCompone
 void UScytheLaunch::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Display, TEXT("Thrown Collided with: %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Display, TEXT("Launched Collided with: %s"), *OtherActor->GetName());
 	if (Scythe->ScytheState != EScytheState::THROWN || OtherActor == Scythe->ScytheHand->Reaper) return;
 
 	IDamageable* ComponentToDamage = Cast<IDamageable>(UTypeUtil::GetFirstComponentByInterface(OtherActor, UDamageable::StaticClass()));
 
-	bool bShouldScytheStop = ActionParameters.bShouldStopAtAnObstacle;
+	bool bShouldScytheStop = ActionParameters.bShouldStopAfterHit || (ActionParameters.bShouldStopAtAnObstacle && !ComponentToDamage);
 	
 	if (ComponentToDamage)
 	{

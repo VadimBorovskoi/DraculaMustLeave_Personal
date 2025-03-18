@@ -35,6 +35,20 @@ struct FScytheActionParameters
 {
 	GENERATED_BODY()
 public:
+	FScytheActionParameters()
+		: bShouldStopAtAnObstacle(true),
+		  bShouldStopAfterHit(true),
+		  MaxVelocity(0.0f),
+		  MinVelocity(0.0f),
+		  AccelerationCurve(nullptr),
+		  DecelerationCurve(nullptr),
+		  RotationRate(0.0f),
+		  RollAngle(0.0f),
+		  SpinSign(1),
+		  ManaConsumption(0.0f),
+		  ManaConsumptionPerFrame(0.0f),
+		  DamagePerHit(0.0f)
+	{}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
 	bool bShouldStopAtAnObstacle = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision Parameters")
@@ -68,16 +82,16 @@ public:
 	{
 		FScytheActionParameters Result;
 
-		// Logical OR for booleans (to preserve any 'true' value)
-		Result.bShouldStopAtAnObstacle = bShouldStopAtAnObstacle || Other.bShouldStopAtAnObstacle;
-		Result.bShouldStopAfterHit = bShouldStopAfterHit || Other.bShouldStopAfterHit;
+		// Make sure the Scythe goes through obstacles if any ability allows it 
+		Result.bShouldStopAtAnObstacle = bShouldStopAtAnObstacle && Other.bShouldStopAtAnObstacle;
+		Result.bShouldStopAfterHit = bShouldStopAfterHit && Other.bShouldStopAfterHit;
 
 		// Addition for numeric fields
 		Result.MaxVelocity = MaxVelocity + Other.MaxVelocity;
 		Result.MinVelocity = MinVelocity + Other.MinVelocity;
 		Result.RotationRate = RotationRate + Other.RotationRate;
 		Result.RollAngle = RollAngle + Other.RollAngle;
-		Result.SpinSign = FMath::Sign( SpinSign * Other.SpinSign); 
+		Result.SpinSign = FMath::Sign(SpinSign * Other.SpinSign); 
 		Result.ManaConsumption = ManaConsumption + Other.ManaConsumption;
 		Result.ManaConsumptionPerFrame = ManaConsumptionPerFrame + Other.ManaConsumptionPerFrame;
 		Result.DamagePerHit = DamagePerHit + Other.DamagePerHit;
@@ -88,26 +102,10 @@ public:
 
 		return Result;
 	}
+
 	FScytheActionParameters& operator+=(const FScytheActionParameters& Other)
 	{
-		// Logical OR for booleans (to preserve any 'true' value)
-		bShouldStopAtAnObstacle |= Other.bShouldStopAtAnObstacle;
-		bShouldStopAfterHit |= Other.bShouldStopAfterHit;
-
-		// Addition for numeric fields
-		MaxVelocity += Other.MaxVelocity;
-		MinVelocity += Other.MinVelocity;
-		RotationRate += Other.RotationRate;
-		RollAngle += Other.RollAngle;
-		SpinSign += Other.SpinSign; // May need special handling if sign matters
-		ManaConsumption += Other.ManaConsumption;
-		ManaConsumptionPerFrame += Other.ManaConsumptionPerFrame;
-		DamagePerHit += Other.DamagePerHit;
-
-		// Pointer fields are not added; instead, we keep the first non-null value
-		if (Other.AccelerationCurve) AccelerationCurve = Other.AccelerationCurve;
-		if (Other.DecelerationCurve) DecelerationCurve = Other.DecelerationCurve;
-
+		*this = *this + Other;
 		return *this;
 	}
 	void SetNonZeroParams(const FScytheActionParameters& Other)

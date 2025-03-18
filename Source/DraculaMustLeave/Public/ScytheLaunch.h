@@ -39,4 +39,6 @@ public:
 			int32 OtherBodyIndex, 
 			bool bFromSweep, 
 			const FHitResult& SweepResult) override;
+	AActor* GetStuckParent() const { return StuckParent; }
+	void SetStuckParent(AActor* NewParent) { StuckParent = NewParent; }
 };

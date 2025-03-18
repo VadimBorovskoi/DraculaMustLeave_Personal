@@ -13,7 +13,6 @@ UScytheHand::UScytheHand()
 	PrimaryComponentTick.bCanEverTick = false;
 	ScytheMesh = CreateDefaultSubobject<USkeletalMeshComponent>("ScytheMesh");
 	ScytheMesh->SetupAttachment(this);
-	ScytheMesh->AttachToComponent(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "ScytheSocket");
 	ScytheMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
