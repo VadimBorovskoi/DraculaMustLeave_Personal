@@ -34,6 +34,20 @@ void AReaperPawn::BeginPlay()
 	StrafeMovement = GetComponentByClass<UStrafeMovement>();
 	ComboHealth = GetComponentByClass<UHealthCombo>();
 	CurrentMovement = BaseMovement;
+	TArray<UActorComponent*> ComponentsToUpdate = GetComponentsByInterface(UUpdatable::StaticClass());
+	for (int32 i = 0; i < ComponentsToUpdate.Num(); i++)
+	{
+		IUpdatable* NewUpdatable = Cast<IUpdatable>(ComponentsToUpdate[i]);
+		if (NewUpdatable)
+		{
+			OnTick.AddUniqueDynamic(NewUpdatable, &IUpdatable::TickUpdate);
+		}
+	}
+}
+void AReaperPawn::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	OnTick.Broadcast(DeltaSeconds);
 }
 void AReaperPawn::ProcessInput_Implementation(float InputX, float InputY, AActor* Target)
 {

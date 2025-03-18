@@ -73,36 +73,42 @@ void UScytheCharge::Update(float DeltaTime)
 
 
 	FVector Start = Scythe->GetBottomPosition();
-	FVector End = Start + (Scythe->GetMovementDirection().GetSafeNormal() * 1000.f);
+	FVector End = Start + (Scythe->GetMovementDirection().GetSafeNormal() * BottomGrazeCheckLength);
 	// Perform the line trace
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_Visibility, // Trace channel
-		QueryParams
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End,BottomGrazeTraceChannel, QueryParams
 	);
-
+	bool bZAxisConditionFulfilled = !(bShouldCheckZAxisOnly && HitResult.Normal.Z <= 0.f);
 	if (bHit)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Purple, FString::Printf(TEXT("Hit: %s"), *HitResult.GetActor()->GetActorNameOrLabel()));
-
+		
 		// Draw debug line (optional)
 		DrawDebugLine(GetWorld(), Start, HitResult.ImpactPoint, FColor::Red, true, 20.f, 0, 1.0f);
 		DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.Normal * 200.f, FColor::Yellow, true, 20.f, 0, 1.0f);
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 32.f, 20, FColor::Purple, true, 20.f, 0, 1.0f);
-		
-		FVector CurrentDirection = Scythe->GetMovementDirection().GetSafeNormal();
-
-		float DotProduct = FVector::DotProduct(CurrentDirection, HitResult.Normal);
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Angle: %f"), FMath::RadiansToDegrees(FMath::Acos(DotProduct))));
-
-		//Check if the Angle is Sharp enough
-		if (DotProduct < 0.0f)
+		if (bZAxisConditionFulfilled)
 		{
-			FVector SlideDirection = FVector::VectorPlaneProject(CurrentDirection, HitResult.Normal).GetSafeNormal();
-			// Interpolate smoothly to avoid sudden snapping
-			NewRotation.Pitch = SlideDirection.Rotation().Pitch;
+			FVector CurrentDirection = Scythe->GetMovementDirection().GetSafeNormal();
+
+			float DotProduct = FVector::DotProduct(CurrentDirection, HitResult.Normal);
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Angle: %f"), FMath::RadiansToDegrees(FMath::Acos(DotProduct))));
+
+			//Check if the Angle is Sharp enough
+			if (DotProduct < 0.0f)
+			{
+				FVector SlideDirection = FVector::VectorPlaneProject(CurrentDirection, HitResult.Normal).GetSafeNormal();
+				// Interpolate smoothly to avoid sudden snapping
+				NewRotation.Pitch = SlideDirection.Rotation().Pitch;
+			}
+			
+			// Ensure the bottom position is slightly raised above the impact surface
+			FVector AdjustedPosition = Scythe->GetActorLocation();
+		
+			if (Start.Z <= HitResult.ImpactPoint.Z + GrazeClearanceLength)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Purple, FString::Printf(TEXT("Adjusting Scythe Z Position...")));
+				AdjustedPosition.Z = HitResult.ImpactPoint.Z + GrazeClearanceLength;
+				Scythe->SetActorLocation(AdjustedPosition);
+			}
 		}
 	}
 	else

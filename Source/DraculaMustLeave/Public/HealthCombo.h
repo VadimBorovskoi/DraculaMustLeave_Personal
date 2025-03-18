@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "HealthBase.h"
+#include "Updatable.h"
 #include "HealthCombo.generated.h"
 
 /**
@@ -13,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageIncrease, int, Stage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageDecrease, int, Stage);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class DRACULAMUSTLEAVE_API UHealthCombo : public UHealthBase
+class DRACULAMUSTLEAVE_API UHealthCombo : public UHealthBase, public IUpdatable
 {
 	GENERATED_BODY()
 public:
@@ -38,6 +39,6 @@ protected:
 public:
 	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe) override;
 	virtual void Die(AActor* Sender, UObject* DamageSource) override;
+	virtual void TickUpdate(float DeltaTime) override;
 	void AddHealth(float DamagePoints);
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

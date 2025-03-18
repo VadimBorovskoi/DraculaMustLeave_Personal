@@ -6,7 +6,7 @@
 
 UHealthCombo::UHealthCombo()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 void UHealthCombo::BeginPlay()
 {
@@ -20,7 +20,7 @@ void UHealthCombo::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& D
 	CurrentHealth = FMath::Min(0.f, CurrentHealth - Damage);
 	//Slightly Increase Health for the Last Hit
 	CurrentHealth = CurrentHealth < LastHitHealth ? LastHitHealth : CurrentHealth;
-	UE_LOG(LogTemp, Warning, TEXT("Health Left %f"), CurrentHealth);
+	UE_LOG(LogTemp, Warning, TEXT("Reaper Health Left %f"), CurrentHealth);
 	//Cooldown for Regeneration
 	CurrentCooldownTime = CooldownTimeSec;
 	OnUpdateHealth.Broadcast(CurrentHealth);
@@ -46,12 +46,12 @@ void UHealthCombo::AddHealth(float DamagePoints)
 	//Reset Cooldown
 	CurrentCooldownTime = CooldownTimeSec;
 	OnUpdateHealth.Broadcast(CurrentHealth);
-	UE_LOG(LogTemp, Warning, TEXT("Health Left %f"), CurrentHealth);
 
 	UpdateStage();
 
 }
-void UHealthCombo::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+
+void UHealthCombo::TickUpdate(float DeltaTime)
 {
 	if (CurrentCooldownTime > 0.f)
 	{
@@ -59,8 +59,10 @@ void UHealthCombo::TickComponent(float DeltaTime, enum ELevelTick TickType, FAct
 		return;
 	}
 	CurrentHealth = UInterpolationUtil::FAsymptoticAverageSpeedBased(CurrentHealth, DefaultHealth, RestoreToDefaultSpeed, DeltaTime );
+	UE_LOG(LogTemp, Warning, TEXT("Reaper Health Left %f"), CurrentHealth);
 	OnUpdateHealth.Broadcast(CurrentHealth);
 }
+
 void UHealthCombo::UpdateStage()
 {
 	//Check if the combo stage is reduced

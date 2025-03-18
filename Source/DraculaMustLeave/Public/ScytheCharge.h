@@ -14,7 +14,15 @@ UCLASS()
 class DRACULAMUSTLEAVE_API UScytheCharge : public UAbsScytheAbility
 {
 	GENERATED_BODY()
-private:
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bottom Graze Parameters")
+	float BottomGrazeCheckLength = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bottom Graze Parameters")
+	TEnumAsByte<ECollisionChannel> BottomGrazeTraceChannel = ECC_Visibility;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bottom Graze Parameters")
+	bool bShouldCheckZAxisOnly = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bottom Graze Parameters")
+	float GrazeClearanceLength = 5.f;
 	UScytheLaunch* ScytheLaunch;
 protected:
 	virtual void BeginPlay() override;

@@ -11,6 +11,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "HealthCombo.h"
+#include "TypeUtil.h"
 #include "ReaperPawn.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDashBegin, AActor*, ActorTarget, float, XValue);
@@ -33,7 +34,8 @@ public:
 	FOnDashEnd OnDashEnd;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnDashUpdate OnDashUpdate;
-
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnUpdate OnTick;
 	//Movement Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementComponents")
 	TObjectPtr<UStrafeMovement> StrafeMovement;
@@ -61,7 +63,7 @@ public:
 	bool isDashing;
 	
 protected:
-	//Input Cache
+	//Input Cached
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SceneComponents")
 	float CurXInput;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SceneComponents")
@@ -78,6 +80,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Utils")
 	bool CanMove();
+	virtual void Tick(float DeltaSeconds) override;
 protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchMovement(AActor* Target);
