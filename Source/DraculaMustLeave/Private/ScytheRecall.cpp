@@ -73,8 +73,10 @@ void UScytheRecall::Enable(float XDir, FVector NewTargetPoint)
 		}
 	}
 	
-	Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumption, true);
-}
+	if (ActionParameters.ManaConsumption > 0.0f)
+	{
+		Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumption, true);
+	}}
 //Handle Acceleration, Lerp towards the Scythe Hand, Decelerate if close to the Scythe 
 void UScytheRecall::Update(float DeltaTime)
 {
@@ -101,8 +103,10 @@ void UScytheRecall::Update(float DeltaTime)
 	
 	if (Scythe->ScytheState != EScytheState::RECALLED) return;
 	
-	Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumptionPerFrame, false);
-
+	if (ActionParameters.ManaConsumptionPerFrame > 0.0f)
+	{
+		Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumptionPerFrame * DeltaTime, false);
+	}
 	ActionTimeElapsed += DeltaTime;
 	
 	float DistanceToOwner = FVector::Distance(Scythe->GetActorLocation(), Scythe->ScytheHand->GetComponentLocation());

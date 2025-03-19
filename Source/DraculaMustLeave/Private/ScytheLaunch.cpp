@@ -65,14 +65,19 @@ void UScytheLaunch::Enable(float XDir, FVector NewTargetPoint)
 	Scythe->ScytheState = EScytheState::THROWN;
 	UE_LOG(LogTemp, Display, TEXT("Thrown Enabled"));
 	
-	Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumption, true);
+	if (ActionParameters.ManaConsumption > 0.0f)
+	{
+		Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumption, true);
+	}
 }
 //Accelerate towards the point, move there
 void UScytheLaunch::Update(float DeltaTime)
 {
 	if (Scythe->ScytheState != EScytheState::THROWN) return;
-	
-	Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumptionPerFrame * DeltaTime, false);
+	if (ActionParameters.ManaConsumptionPerFrame > 0.0f)
+	{
+		Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ActionParameters.ManaConsumptionPerFrame * DeltaTime, false);
+	}
 
 	ActionTimeElapsed += DeltaTime;
 	if (CurrentVelocity != ActionParameters.MaxVelocity)
