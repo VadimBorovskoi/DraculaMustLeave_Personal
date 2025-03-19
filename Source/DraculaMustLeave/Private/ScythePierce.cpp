@@ -6,6 +6,8 @@
 
 void UScythePierce::AttachToAction(AScythe* NewScythe)
 {
+	if (ConnectedAction->Scythe->ScytheHand->Reaper->ReaperMana->CanUseAbility(OverridenActionParameters.ManaConsumption) == false) return;
+	
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("Combo Activated Within Window")));
 	//Rewrite the struct of parameters
 	ConnectedAction->UpdateParameters(OverridenActionParameters, true);

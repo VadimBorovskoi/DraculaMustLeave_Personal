@@ -14,6 +14,7 @@ void UScytheCharge::BeginPlay()
 
 void UScytheCharge::AttachToAction(AScythe* NewScythe)
 {
+	if (ConnectedAction->Scythe->ScytheHand->Reaper->ReaperMana->CanUseAbility(OverridenActionParameters.ManaConsumption) == false) return;
 	//Rewrite the struct of parameters, Add new Update Behavior & On Hit Collision Behavior
 	ConnectedAction->UpdateParameters(OverridenActionParameters, false);
 	
@@ -63,6 +64,8 @@ void UScytheCharge::Update(float DeltaTime)
 {
 	if (Scythe->ScytheState != EScytheState::THROWN) return;
 
+	Scythe->ScytheHand->Reaper->ReaperMana->ReduceMana(ConnectedAction->ActionParameters.ManaConsumptionPerFrame * DeltaTime, false);
+	
 	FRotator NewRotation = Scythe->GetActorRotation();
 
 	
@@ -82,15 +85,15 @@ void UScytheCharge::Update(float DeltaTime)
 	{
 		
 		// Draw debug line (optional)
-		DrawDebugLine(GetWorld(), Start, HitResult.ImpactPoint, FColor::Red, true, 20.f, 0, 1.0f);
-		DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.Normal * 200.f, FColor::Yellow, true, 20.f, 0, 1.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 32.f, 20, FColor::Purple, true, 20.f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), Start, HitResult.ImpactPoint, FColor::Red, true, 10.f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.Normal * 200.f, FColor::Yellow, false, 10.f, 0, 1.0f);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 32.f, 20, FColor::Purple, false, 10.f, 0, 1.0f);
 		if (bZAxisConditionFulfilled)
 		{
 			FVector CurrentDirection = Scythe->GetMovementDirection().GetSafeNormal();
 
 			float DotProduct = FVector::DotProduct(CurrentDirection, HitResult.Normal);
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Angle: %f"), FMath::RadiansToDegrees(FMath::Acos(DotProduct))));
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Angle: %f"), FMath::RadiansToDegrees(FMath::Acos(DotProduct))));
 
 			//Check if the Angle is Sharp enough
 			if (DotProduct < 0.0f)
@@ -105,7 +108,7 @@ void UScytheCharge::Update(float DeltaTime)
 		
 			if (Start.Z <= HitResult.ImpactPoint.Z + GrazeClearanceLength)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Purple, FString::Printf(TEXT("Adjusting Scythe Z Position...")));
+				//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Purple, FString::Printf(TEXT("Adjusting Scythe Z Position...")));
 				AdjustedPosition.Z = HitResult.ImpactPoint.Z + GrazeClearanceLength;
 				Scythe->SetActorLocation(AdjustedPosition);
 			}
@@ -136,11 +139,9 @@ void UScytheCharge::Update(float DeltaTime)
 
 void UScytheCharge::HitMesh(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
-	
 	if (!ScytheLaunch || Scythe->ScytheState != EScytheState::THROWN || OtherActor == Scythe->ScytheHand->Reaper) return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Orange, FString::Printf(TEXT("Charged Collided with: %s"), *OtherActor->GetName()));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Orange, FString::Printf(TEXT("Charged Collided with: %s"), *OtherActor->GetName()));
 
 	IDamageable* ComponentToDamage = Cast<IDamageable>(UTypeUtil::GetFirstComponentByInterface(OtherActor, UDamageable::StaticClass()));
 

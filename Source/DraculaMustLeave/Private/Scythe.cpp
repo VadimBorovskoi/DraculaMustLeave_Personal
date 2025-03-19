@@ -157,6 +157,7 @@ void AScythe::SetOwnerHand(UScytheHand* Hand)
 void AScythe::UpdateReaperCombo(float DealtDamage)
 {
 	ScytheHand -> Reaper -> ComboHealth -> AddHealth(DealtDamage);
+	ScytheHand->Reaper -> ReaperMana -> RestoreMana(DealtDamage);
 }
 
 

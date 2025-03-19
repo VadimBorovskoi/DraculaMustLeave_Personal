@@ -11,6 +11,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "HealthCombo.h"
+#include "ReaperMana.h"
 #include "TypeUtil.h"
 #include "ReaperPawn.generated.h"
 
@@ -45,9 +46,10 @@ public:
 	UAbstractMovement* CurrentMovement;
 
 	//Stats Components
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementAComponents")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthAndMana")
 	TObjectPtr<UHealthCombo> ComboHealth;
-	
+	TObjectPtr<UReaperMana> ReaperMana;
+
 	//Camera & Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SceneComponents")
 	USpringArmComponent* SpringArm;

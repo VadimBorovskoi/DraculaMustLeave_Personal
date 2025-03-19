@@ -33,6 +33,7 @@ void AReaperPawn::BeginPlay()
 	BaseMovement = GetComponentByClass<UBaseMovement>();
 	StrafeMovement = GetComponentByClass<UStrafeMovement>();
 	ComboHealth = GetComponentByClass<UHealthCombo>();
+	ReaperMana = GetComponentByClass<UReaperMana>();
 	CurrentMovement = BaseMovement;
 	TArray<UActorComponent*> ComponentsToUpdate = GetComponentsByInterface(UUpdatable::StaticClass());
 	for (int32 i = 0; i < ComponentsToUpdate.Num(); i++)

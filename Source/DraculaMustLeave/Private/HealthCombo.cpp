@@ -59,7 +59,6 @@ void UHealthCombo::TickUpdate(float DeltaTime)
 		return;
 	}
 	CurrentHealth = UInterpolationUtil::FAsymptoticAverageSpeedBased(CurrentHealth, DefaultHealth, RestoreToDefaultSpeed, DeltaTime );
-	UE_LOG(LogTemp, Warning, TEXT("Reaper Health Left %f"), CurrentHealth);
 	OnUpdateHealth.Broadcast(CurrentHealth);
 }
 
