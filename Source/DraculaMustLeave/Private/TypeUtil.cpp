@@ -27,3 +27,14 @@ UActorComponent* UTypeUtil::GetFirstComponentByInterface(AActor* Actor, TSubclas
     
 	return Components.Num() > 0 ? Components[0] : nullptr;
 }
+void UTypeUtil::GetMinutesAndSeconds(int32 TotalSeconds, int32& OutMinutes, int32& OutSeconds)
+{
+	OutMinutes = TotalSeconds / 60;
+	OutSeconds = TotalSeconds % 60;
+}
+FVector2D UTypeUtil::GetRandomVector2DInRange(const FVector2D& Min, const FVector2D& Max)
+{
+	float RandomX = FMath::RandRange(Min.X, Max.X);
+	float RandomY = FMath::RandRange(Min.Y, Max.Y);
+	return FVector2D(RandomX, RandomY);
+}

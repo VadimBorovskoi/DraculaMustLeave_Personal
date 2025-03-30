@@ -65,7 +65,7 @@ FVector UScytheHand::GetCrosshairTarget() const
 }
 FVector UScytheHand::GetReaperMovementDirection() const
 {
-	return Reaper->GetMovementComponent()->Velocity;
+	return Reaper->GetActorRotation().UnrotateVector(Reaper->GetMovementComponent()->Velocity.GetSafeNormal());
 }
 
 

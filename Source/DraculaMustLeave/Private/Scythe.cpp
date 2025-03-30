@@ -74,8 +74,8 @@ bool AScythe::ReceiveInput()
 	bIsOnPress = CurrentAction->IsOnPress();
 	if (bIsOnPress)
 	{
-		CurrentAction->OnActivate.Broadcast(ScytheHand->GetReaperMovementDirection().X, ScytheHand->GetCrosshairTarget());
-	}
+		float MovementDirX = ScytheHand->GetReaperMovementDirection().X;
+		CurrentAction->OnActivate.Broadcast(MovementDirX == 0 ? 1.f : MovementDirX, ScytheHand->GetCrosshairTarget());	}
 	return true;
 }
 bool AScythe::Charge(float ElapsedSeconds)
@@ -88,8 +88,8 @@ bool AScythe::Charge(float ElapsedSeconds)
 bool AScythe::Release()
 {
 	if (bIsOnPress || CurrentAction->IsActive()) return false;
-
-	CurrentAction->OnActivate.Broadcast(ScytheHand->GetReaperMovementDirection().X, ScytheHand->GetCrosshairTarget());
+	float MovementDirX = ScytheHand->GetReaperMovementDirection().X;
+	CurrentAction->OnActivate.Broadcast(MovementDirX == 0 ? 1.f : MovementDirX, ScytheHand->GetCrosshairTarget());
 	return true;
 }
 void AScythe::SwitchAction(UAbsScytheAction* NewAction)

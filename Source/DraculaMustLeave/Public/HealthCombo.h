@@ -10,8 +10,7 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageIncrease, int, Stage);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageDecrease, int, Stage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageChange, int, Stage);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UHealthCombo : public UHealthBase, public IUpdatable
@@ -20,9 +19,9 @@ class DRACULAMUSTLEAVE_API UHealthCombo : public UHealthBase, public IUpdatable
 public:
 	UHealthCombo();
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnStageDecrease OnStageDecrease;
+	FOnStageChange OnStageDecrease;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnStageIncrease OnStageIncrease;
+	FOnStageChange OnStageIncrease;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ComboBarParameters")
 	float DefaultHealth = 20.f;
@@ -33,12 +32,15 @@ protected:
 	
 	float CurrentCooldownTime = 0.f;
 	int CurrentStage = 0;
-protected:
-	virtual void BeginPlay() override;
-	virtual void UpdateStage();
 public:
 	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe) override;
 	virtual void Die(AActor* Sender, UObject* DamageSource) override;
 	virtual void TickUpdate(float DeltaTime) override;
+	float GetDefaultHealth() { return DefaultHealth; }
 	void AddHealth(float DamagePoints);
+	UFUNCTION(BlueprintPure, Category="Health Data")
+	int GetCurrentStage() { return CurrentStage; }
+protected:
+	virtual void BeginPlay() override;
+	virtual void UpdateStage();
 };

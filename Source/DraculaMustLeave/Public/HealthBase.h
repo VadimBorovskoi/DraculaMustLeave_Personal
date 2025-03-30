@@ -8,7 +8,7 @@
 #include "HealthBase.generated.h"
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDie, AActor*, Killer, UObject*, KillingTool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHurt, AActor*, Killer, UObject*, KillingTool);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateHealth, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateStats, float, NewHealth);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UHealthBase : public UActorComponent, public IDamageable
@@ -23,7 +23,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnDie OnHurt;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnUpdateHealth OnUpdateHealth;
+	FOnUpdateStats OnUpdateHealth;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health Values")
 	float MaxHealth = 100.f;

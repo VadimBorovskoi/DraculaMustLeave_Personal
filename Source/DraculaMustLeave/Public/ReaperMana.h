@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HealthBase.h"
 #include "Updatable.h"
 #include "Components/ActorComponent.h"
 #include "ReaperMana.generated.h"
@@ -12,7 +13,6 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UReaperMana : public UActorComponent, public IUpdatable
 {
 	GENERATED_BODY()
-
 protected:
 	float CurrentMana = MaxMana;
 	float CurrentGhostMana = MaxMana;
@@ -24,6 +24,10 @@ public:
 	// Sets default values for this component's properties
 	//When Mana is reduced, ghost mana's current parameter is reduced
 	UReaperMana();
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnUpdateStats OnUpdateMana;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnUpdateStats OnUpdateGhostMana;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mana Parameters")
 	float MaxMana = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mana Parameters")

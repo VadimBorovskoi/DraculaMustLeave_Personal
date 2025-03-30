@@ -11,7 +11,7 @@ UHealthCombo::UHealthCombo()
 void UHealthCombo::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHealth = DefaultHealth;
+	CurrentHealth = 1.f;
 }
 
 void UHealthCombo::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe)
@@ -60,6 +60,7 @@ void UHealthCombo::TickUpdate(float DeltaTime)
 	}
 	CurrentHealth = UInterpolationUtil::FAsymptoticAverageSpeedBased(CurrentHealth, DefaultHealth, RestoreToDefaultSpeed, DeltaTime );
 	OnUpdateHealth.Broadcast(CurrentHealth);
+	UpdateStage();
 }
 
 void UHealthCombo::UpdateStage()

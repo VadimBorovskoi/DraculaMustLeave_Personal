@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Framework/Application/SlateApplication.h"
+#include "InputCoreTypes.h"
 #include "TypeUtil.generated.h"
 
 /**
@@ -156,5 +158,8 @@ public:
 	static float GetRotatorDistance(FRotator Start, FRotator End);
 	static float GetPowWithSign(float num, float pow);
 	static UActorComponent* GetFirstComponentByInterface(AActor* Actor, TSubclassOf<UInterface> InterfaceClass);
-	
+	UFUNCTION(BlueprintPure, Category = "Time Related")
+	static void GetMinutesAndSeconds(int32 TotalSeconds, int32& OutMinutes, int32& OutSeconds );
+	static FVector2D GetRandomVector2DInRange(const FVector2D& Min, const FVector2D& Max);
+
 };
