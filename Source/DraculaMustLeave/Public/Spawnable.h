@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "GameFramework/Character.h"
 #include "Spawnable.generated.h"
 class ASpawnPoint;
 class USpawnSystem;
 UCLASS(Abstract, Blueprintable, ClassGroup=(Custom))
-class DRACULAMUSTLEAVE_API ASpawnable : public AActor
+class DRACULAMUSTLEAVE_API ASpawnable : public ACharacter
 {
 	GENERATED_BODY()
 protected:
