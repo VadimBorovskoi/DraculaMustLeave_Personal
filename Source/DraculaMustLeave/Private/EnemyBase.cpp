@@ -13,7 +13,7 @@ void AEnemyBase::InitializeAfterSpawn(ASpawnPoint* SpawnPoint, USpawnSystem* Spa
 {
 	Super::InitializeAfterSpawn(SpawnPoint, SpawnSystem, inSpawnDelay);
 	Health = GetComponentByClass<UHealthBase>();
-	if (!Health) Health = CreateDefaultSubobject<UHealthBase>(TEXT("Arrow"));
+	if (!Health) Health = CreateDefaultSubobject<UHealthBase>(TEXT("Health"));
 	Health->OnDie.AddUniqueDynamic(this, &AEnemyBase::HandleRespawn);
 }
 void AEnemyBase::HandleRespawn(AActor* Killer, UObject* KillingTool)

@@ -44,6 +44,9 @@ void AReaperPawn::BeginPlay()
 			OnTick.AddUniqueDynamic(NewUpdatable, &IUpdatable::TickUpdate);
 		}
 	}
+	Collider = Cast<UShapeComponent>(RootComponent);
+	CachedGravity = GetCharacterMovement()->GravityScale;
+	Collider->OnComponentBeginOverlap.AddUniqueDynamic(this, &AReaperPawn::TriggerCollision);
 }
 void AReaperPawn::Tick(float DeltaSeconds)
 {
@@ -98,7 +101,30 @@ bool AReaperPawn::CanMove()
 {
 	return isDashing == false || isDashRestrictive == false;
 }
+void AReaperPawn::AlterPhysicsAndInput(const bool &DisableCollisionBlock, const bool &DisableGravity, const bool &DisableInput)
+{
+	if (DisableCollisionBlock){
+		Collider->SetCollisionProfileName("ScytheRecall");
+	} else
+	{
+		Collider->SetCollisionProfileName(EName::Pawn);
+	}
+	
+	if (DisableInput)
+	{
+		isDashing = true;
+	} else
+	{
+		isDashing = false;
+	}
 
+	if (DisableGravity){
+		GetCharacterMovement()->GravityScale = 0.0f;
+	} else
+	{
+		GetCharacterMovement()->GravityScale = CachedGravity;
+	}
+} 
 
 
 

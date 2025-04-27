@@ -14,7 +14,8 @@ enum EGameModeState
 {
 	PLAYING,     
 	PAUSED, 
-	GAME_OVER
+	GAME_OVER,
+	UPGRADE_STORE
 };
 
 UCLASS()

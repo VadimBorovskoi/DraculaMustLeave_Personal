@@ -10,6 +10,8 @@ AReaperGameState::AReaperGameState(){
 	GameModeStatesMap.Add(EGameModeState::PLAYING, &OnPlaying);
 	GameModeStatesMap.Add(EGameModeState::PAUSED, &OnPaused);
 	GameModeStatesMap.Add(EGameModeState::GAME_OVER, &OnGameOver);
+	GameModeStatesMap.Add(EGameModeState::UPGRADE_STORE, &OnUpgradeMenu);
+
 	OnGameOver.AddUniqueDynamic(this, &AReaperGameState::DebugGameOver);
 }
 void AReaperGameState::BeginPlay(){
@@ -47,6 +49,17 @@ void AReaperGameState::TogglePause(int UpdatedScore){
 		return;
 	}
 	if(GameModeState == EGameModeState::PAUSED){
+		SetNewGameModeState(EGameModeState::PLAYING, UpdatedScore);
+		return;
+	}
+}
+void AReaperGameState::ToggleUpgradeMenu(int UpdatedScore)
+{
+	if(GameModeState == EGameModeState::PLAYING){
+		SetNewGameModeState(EGameModeState::UPGRADE_STORE, UpdatedScore);
+		return;
+	}
+	if(GameModeState == EGameModeState::UPGRADE_STORE){
 		SetNewGameModeState(EGameModeState::PLAYING, UpdatedScore);
 		return;
 	}

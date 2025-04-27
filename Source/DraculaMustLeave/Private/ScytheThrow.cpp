@@ -97,7 +97,7 @@ void UScytheThrow::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, A
 	if (ActorToDamage)
 	{
 		float ModifiedDamage = ActionParameters.DamagePerHit;
-		ActorToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, ModifiedDamage, bShouldScytheStop );
+		ActorToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, SweepResult, ModifiedDamage, bShouldScytheStop );
 		Scythe->UpdateReaperCombo(ModifiedDamage);
 	}
 	if (bShouldScytheStop)

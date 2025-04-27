@@ -23,13 +23,30 @@ protected:
 	bool bShouldCheckZAxisOnly = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bottom Graze Parameters")
 	float GrazeClearanceLength = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float UpPitchRotationSpeed = 5.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float UpMovementVelocity = 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float MaxUpDistance = 2000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	int AirPunchCount = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float InitialPunchForce = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float AdditionalPunchForce = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Scythe Lift Parameters")
+	float NonHitWindow = .5f;
 	UScytheLaunch* ScytheLaunch;
+	bool bShouldGoUp = false;
+	int CurrentPunchCount = 0;
+	float CurrentNonHitWindow = 0.f;
 protected:
 	virtual void BeginPlay() override;
 public:
 	virtual void AttachToAction(AScythe* NewScythe) override;
 	virtual void DetachFromAction(AScythe* NewScythe) override;
-	virtual void Activate(AScythe* NewScythe) override;
+	virtual void ActivateAbility(AScythe* NewScythe) override;
 	virtual void Enable(float xDir, FVector TargetPoint) __override;
 	virtual void Disable() __override;
 	virtual void Charge(float ElapsedTime) __override;

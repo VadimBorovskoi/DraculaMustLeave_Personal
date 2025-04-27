@@ -19,9 +19,9 @@ void UScythePierce::DetachFromAction(AScythe* NewScythe)
 }
 
 
-void UScythePierce::Activate(AScythe* NewScythe)
+void UScythePierce::ActivateAbility(AScythe* NewScythe)
 {
-	Super::Activate(NewScythe);
+	Super::ActivateAbility(NewScythe);
 	UE_LOG(LogTemp, Warning, TEXT("Pierce Attack Activated"));
 }
 void UScythePierce::Enable(float xDir, FVector TargetPoint)

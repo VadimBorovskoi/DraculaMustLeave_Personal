@@ -209,7 +209,7 @@ void UScytheRecall::HandleMeshOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (ComponentToDamage)
 	{
 		float ModifiedDamage = ActionParameters.DamagePerHit;
-		ComponentToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, ModifiedDamage, bShouldScytheStop );
+		ComponentToDamage->ReceiveDamage(Scythe->ScytheHand->Reaper, Scythe, SweepResult, ModifiedDamage, bShouldScytheStop );
 		Scythe->UpdateReaperCombo(ModifiedDamage);
 	}
 	if (ActionParameters.bShouldStopAtAnObstacle)

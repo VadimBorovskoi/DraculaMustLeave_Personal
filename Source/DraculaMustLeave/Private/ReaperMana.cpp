@@ -62,8 +62,8 @@ void UReaperMana::TickUpdate(float DeltaTime)
 			bShouldManaRegen = false;
 		}
 	}
-	OnUpdateMana.Broadcast(CurrentMana);
-	OnUpdateGhostMana.Broadcast(CurrentGhostMana);
+	OnUpdateMana.Broadcast(CurrentMana, bShouldManaRegen ? 1 : -1);
+	OnUpdateGhostMana.Broadcast(CurrentGhostMana, 1);
 	
 }
 

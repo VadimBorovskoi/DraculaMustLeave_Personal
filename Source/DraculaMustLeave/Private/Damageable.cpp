@@ -2,7 +2,7 @@
 
 
 #include "Damageable.h"
-void IDamageable::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe)
+void IDamageable::ReceiveDamage(AActor* Sender, UObject* DamageSource, const FHitResult& SweepResult, float& Damage, bool& ShouldStopScythe)
 {
 	
 }

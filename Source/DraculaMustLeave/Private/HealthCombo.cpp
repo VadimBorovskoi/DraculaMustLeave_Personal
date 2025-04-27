@@ -14,23 +14,26 @@ void UHealthCombo::BeginPlay()
 	CurrentHealth = 1.f;
 }
 
-void UHealthCombo::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe)
+void UHealthCombo::ReceiveDamage(AActor* Sender, UObject* DamageSource, const FHitResult& SweepResult, float& Damage, bool& ShouldStopScythe)
 {
-	//Reduce Health
-	CurrentHealth = FMath::Min(0.f, CurrentHealth - Damage);
-	//Slightly Increase Health for the Last Hit
-	CurrentHealth = CurrentHealth < LastHitHealth ? LastHitHealth : CurrentHealth;
-	UE_LOG(LogTemp, Warning, TEXT("Reaper Health Left %f"), CurrentHealth);
+	if (MaxHealth != 0.f)
+	{
+		//Reduce Health
+		CurrentHealth = FMath::Max(0.f, CurrentHealth - Damage);
+		//Slightly Increase Health for the Last Hit
+		CurrentHealth = CurrentHealth < LastHitHealth ? LastHitHealth : CurrentHealth;
+		UE_LOG(LogTemp, Warning, TEXT("Reaper Health Left %f"), CurrentHealth);
+	}
 	//Cooldown for Regeneration
 	CurrentCooldownTime = CooldownTimeSec;
-	OnUpdateHealth.Broadcast(CurrentHealth);
+	OnUpdateHealth.Broadcast(CurrentHealth, -1);
 	//Check for death
-	if (CurrentHealth <= 0.f)
+	if (CurrentHealth <= 0.f && MaxHealth != 0.f) 
 	{
 		Die(Sender, DamageSource);
 		return;
 	}
-	OnHurt.Broadcast(Sender, DamageSource);
+	OnHurt.Broadcast(Sender, DamageSource, SweepResult);
 
 	UpdateStage();
 
@@ -45,7 +48,7 @@ void UHealthCombo::AddHealth(float DamagePoints)
 	CurrentHealth += DamagePoints;
 	//Reset Cooldown
 	CurrentCooldownTime = CooldownTimeSec;
-	OnUpdateHealth.Broadcast(CurrentHealth);
+	OnUpdateHealth.Broadcast(CurrentHealth, 1);
 
 	UpdateStage();
 
@@ -59,7 +62,7 @@ void UHealthCombo::TickUpdate(float DeltaTime)
 		return;
 	}
 	CurrentHealth = UInterpolationUtil::FAsymptoticAverageSpeedBased(CurrentHealth, DefaultHealth, RestoreToDefaultSpeed, DeltaTime );
-	OnUpdateHealth.Broadcast(CurrentHealth);
+	OnUpdateHealth.Broadcast(CurrentHealth, 1);
 	UpdateStage();
 }
 

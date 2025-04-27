@@ -16,17 +16,21 @@ UHealthBase::UHealthBase()
 void UHealthBase::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentHealth = MaxHealth;
 
 	// ...
 }
 
-void UHealthBase::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe)
+void UHealthBase::ReceiveDamage(AActor* Sender, UObject* DamageSource, const FHitResult& SweepResult, float& Damage, bool& ShouldStopScythe)
 {
-	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.f, MaxHealth);
-	CurrentHealth = CurrentHealth < LastHitHealth ? LastHitHealth : CurrentHealth;
-	if (ShouldStopScythe) ShouldStopScythe = CurrentHealth > 0.0f;
+	if (MaxHealth != 0)
+	{
+		CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.f, MaxHealth);
+		CurrentHealth = CurrentHealth < LastHitHealth ? LastHitHealth : CurrentHealth;
+	}
+	if (ShouldStopScythe) ShouldStopScythe = CurrentHealth > 0.0f || MaxHealth == 0.f;
 	UE_LOG(LogTemp, Warning, TEXT("Health Left %f"), CurrentHealth);
-	OnUpdateHealth.Broadcast(CurrentHealth);
+	OnUpdateHealth.Broadcast(CurrentHealth, -1);
 	if (IsDead())
 	{
 		if(GetOwner()->ActorHasTag(FName("Enemy")))
@@ -38,7 +42,7 @@ void UHealthBase::ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Da
 	}
 	else
 	{
-		OnHurt.Broadcast(Sender, DamageSource);
+		OnHurt.Broadcast(Sender, DamageSource, SweepResult);
 	}
 }
 void UHealthBase::Die(AActor* Sender, UObject* DamageSource)
@@ -50,5 +54,5 @@ void UHealthBase::Die(AActor* Sender, UObject* DamageSource)
 
 bool UHealthBase::IsDead()
 {
-	return CurrentHealth <= 0.f;
+	return CurrentHealth <= 0.f && MaxHealth != 0.f;
 }

@@ -23,7 +23,7 @@ protected:
 public:
 	virtual void AttachToAction(AScythe* NewScythe) override;
 	virtual void DetachFromAction(AScythe* NewScythe) override;
-	virtual void Activate(AScythe* NewScythe) override;
+	virtual void ActivateAbility(AScythe* NewScythe) override;
 	virtual void Enable(float xDir, FVector TargetPoint) __override;
 	virtual void Disable() __override;
 	virtual void Charge(float ElapsedTime) __override;

@@ -20,7 +20,7 @@ class DRACULAMUSTLEAVE_API IDamageable
 	GENERATED_BODY()
 
 public:
-	virtual void  ReceiveDamage(AActor* Sender, UObject* DamageSource, float &Damage, bool& ShouldStopScythe);
+	virtual void  ReceiveDamage(AActor* Sender, UObject* DamageSource,const FHitResult& SweepResult, float &Damage, bool& ShouldStopScythe);
 	virtual void  Die(AActor* Sender, UObject* DamageSource);
 	virtual bool  IsDead();
 

@@ -105,7 +105,6 @@ void AScythe::SetMeshCollision(FName PresetName)
 void AScythe::SetColliderCollision(FName PresetName)
 {
 	Collider->SetCollisionProfileName(PresetName);
-	
 }
 void AScythe::DisableCollision()
 {

@@ -27,7 +27,8 @@ public:
 	FOnGameModeStateChanged OnPaused;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnGameModeStateChanged OnGameOver;
-
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
+	FOnGameModeStateChanged OnUpgradeMenu;
 	UPROPERTY(BlueprintReadWrite, Category="Time")
 	int32 CurrentTime;
 protected:
@@ -45,4 +46,6 @@ public:
 	void SetNewGameModeState(EGameModeState const NewGameModeState, int32 UpdatedScore);
 	UFUNCTION(BlueprintCallable, Category="State Management")
 	void TogglePause(int UpdatedScore);
+	UFUNCTION(BlueprintCallable, Category="State Management")
+	void ToggleUpgradeMenu(int UpdatedScore);
 };

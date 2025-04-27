@@ -25,13 +25,12 @@ void UAbsScytheAbility::BeginPlay()
 	OnMeshOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HitMesh);
 	OnColliderOverlap.AddUniqueDynamic(this, &UAbsScytheAbility::HitCollision);
 
-	TArray<AActor*> FoundActors;
-	Activate(Cast<AScythe>(GetOwner()));
+	//ActivateAbility(Cast<AScythe>(GetOwner()));
 	
 }
-void UAbsScytheAbility::Activate(AScythe* NewScythe)
+void UAbsScytheAbility::ActivateAbility(AScythe* NewScythe)
 {
-	Scythe = NewScythe;
+    Scythe = NewScythe;
 	ConnectedAction = Cast<UAbsScytheAction>(Scythe->GetComponentByClass(ConnectedActionClass));
 	ConnectedAction->AbilityArray.AddUnique(this);
 	if (ActivationParameters.bShouldCharge) ConnectedAction->OnCharge.AddUniqueDynamic(this, &UAbsScytheAbility::HandleCharge);

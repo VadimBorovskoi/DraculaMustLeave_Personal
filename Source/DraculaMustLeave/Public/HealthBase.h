@@ -7,8 +7,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthBase.generated.h"
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDie, AActor*, Killer, UObject*, KillingTool);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHurt, AActor*, Killer, UObject*, KillingTool);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateStats, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHurt, AActor*, Killer, UObject*, KillingTool, const FHitResult&, SweepResult);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateStats, float, NewHealth, int, UpdateDir);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DRACULAMUSTLEAVE_API UHealthBase : public UActorComponent, public IDamageable
@@ -21,7 +21,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnDie OnDie;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
-	FOnDie OnHurt;
+	FOnHurt OnHurt;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category="Event Dispatchers")
 	FOnUpdateStats OnUpdateHealth;
 protected:
@@ -29,7 +29,7 @@ protected:
 	float MaxHealth = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health Values")
 	float LastHitHealth = 0.0f;
-	float CurrentHealth = MaxHealth;
+	float CurrentHealth;
 
 protected:
 	// Called when the game starts
@@ -37,7 +37,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe) override;
+	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, const FHitResult& SweepResult, float& Damage, bool& ShouldStopScythe) override;
 	virtual void Die(AActor* Sender, UObject* DamageSource) override;
 	virtual bool IsDead() override;
 };

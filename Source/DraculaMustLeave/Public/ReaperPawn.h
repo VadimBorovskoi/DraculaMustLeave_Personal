@@ -63,13 +63,16 @@ public:
 	bool isDashRestrictive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementConditions")
 	bool isDashing;
-	
+	FOnColliderOverlap OnReaperColliderOverlap;
+
 protected:
 	//Input Cached
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SceneComponents")
 	float CurXInput;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SceneComponents")
 	float CurYInput;
+	UShapeComponent* Collider;
+	float CachedGravity;
 public:
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Input Process")
@@ -82,8 +85,20 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Utils")
 	bool CanMove();
+	
 	virtual void Tick(float DeltaSeconds) override;
+	
+	void AlterPhysicsAndInput(const bool &DisableCollisionBlock, const bool &DisableGravity, const bool &DisableInput);
+
 protected:
 	UFUNCTION(BlueprintCallable)
 	void SwitchMovement(AActor* Target);
+	UFUNCTION()
+	void TriggerCollision(UPrimitiveComponent* OverlappedComponent, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			int32 OtherBodyIndex, 
+			bool bFromSweep, 
+			const FHitResult& SweepResult) {OnReaperColliderOverlap.Broadcast(OverlappedComponent,
+				OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
 };

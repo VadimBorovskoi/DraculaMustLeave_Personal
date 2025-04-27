@@ -104,7 +104,8 @@ protected:
 			bool bFromSweep, 
 			const FHitResult& SweepResult) { OnColliderOverlap.Broadcast(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);}
 public:
-	virtual void Activate(AScythe* NewScythe);
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	virtual void ActivateAbility(AScythe* NewScythe);
 	UFUNCTION(Category = "Abstract")
 	virtual void AttachToAction(AScythe* NewScythe) PURE_VIRTUAL(UAbsScytheAbility::AttachToAction, );
 	UFUNCTION(Category = "Abstract")

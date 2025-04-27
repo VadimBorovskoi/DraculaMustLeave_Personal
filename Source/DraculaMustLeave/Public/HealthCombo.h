@@ -33,7 +33,14 @@ protected:
 	float CurrentCooldownTime = 0.f;
 	int CurrentStage = 0;
 public:
-	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, float& Damage, bool& ShouldStopScythe) override;
+	virtual void ReceiveDamage(AActor* Sender, UObject* DamageSource, const FHitResult& SweepResult, float& Damage, bool& ShouldStopScythe) override;
+	UFUNCTION(BlueprintCallable)
+	virtual void Purchase ( float Damage)
+	{
+		FHitResult Hit;
+		bool b = false;
+		ReceiveDamage(GetOwner(), GetOwner(),  Hit, Damage, b);
+	}
 	virtual void Die(AActor* Sender, UObject* DamageSource) override;
 	virtual void TickUpdate(float DeltaTime) override;
 	float GetDefaultHealth() { return DefaultHealth; }
