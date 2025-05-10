@@ -9,7 +9,7 @@
 class ASpawnPoint;
 class USpawnSystem;
 UCLASS(Abstract, Blueprintable, ClassGroup=(Custom))
-class DRACULAMUSTLEAVE_API ASpawnable : public ACharacter
+class DRACULAMUSTLEAVE_API ASpawnable : public APawn
 {
 	GENERATED_BODY()
 protected:

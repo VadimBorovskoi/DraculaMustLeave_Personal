@@ -91,7 +91,7 @@ void UScytheDash::Disable()
 	Reaper->OnReaperColliderOverlap.RemoveDynamic(this, &UScytheDash::HitCollision);
 
 	TArray<FHitResult> ActorsToPunch = UTraceUtil::ConeTraceByChannel(this, Reaper->GetActorLocation(), Reaper->GetActorLocation() + Reaper->GetActorForwardVector() * PunchConeDistance,
-		PunchConeRadius, TraceTypeQuery, true, {Reaper}, EDrawDebugTrace::ForDuration , true, EConeDebugShape::Cone, FColor::Blue, FColor::Red, 10.f );
+		PunchConeRadius, TraceTypeQuery, true, {Reaper}, EDrawDebugTrace::ForDuration , true, EConeDebugShape::Cone, FColor::Blue, FColor::Red, 2.f );
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, FString::Printf(TEXT("Actors Found %d"), ActorsToPunch.Num()));
 	for (int32 i = 0; i < ActorsToPunch.Num(); i++)
 	{

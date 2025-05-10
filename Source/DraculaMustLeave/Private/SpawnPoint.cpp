@@ -30,7 +30,7 @@ bool ASpawnPoint::TrySpawnObject(TSubclassOf<ASpawnable> const SpawnableClass, f
 	TimerDel.BindLambda([this, SpawnSystem, SpawnableClass, SpawnDelay]() 
 	{
 UE_LOG(LogTemp, Warning, TEXT("SPAWNING AN ENEMYYYYYY: %s"), *SpawnableClass->GetName());
-		SpawnObject(SpawnableClass, SpawnDelay, SpawnSystem);
+    		SpawnObject(SpawnableClass, SpawnDelay, SpawnSystem);
 	});
 	FTimerHandle TimerHandle;
 	CurrentSpawnObjects++;
